@@ -33,8 +33,8 @@ set(ALL_LIBRARIES ${ALL_LIBRARIES} glad)
 
 ##################################################
 file(GLOB HEADER_FILES include/*.hpp)
-file(GLOB EXT_SRC_FILES src/[^e][^x]*.cpp)
-file(GLOB EXE_SRC_FILES src/[^e][^x]*.cpp)
+file(GLOB EXT_SRC_FILES include/*.cpp)
+file(GLOB EXE_SRC_FILES src/*.cpp)
 #file(GLOB_RECURSE SHADER_FILES *.glsl)
 list(REMOVE_ITEM EXT_SRC_FILES ${EXE_SRC_FILES})
 

@@ -4,6 +4,7 @@
 #include <vector>
 #include <math.h>
 #include "../include/Person.hpp"
+#include "../include/Voiture.hpp"
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
 #else
@@ -31,8 +32,6 @@ struct Vertex
     float _y;
 };
 static float aspectRatio;
-
-Person p;
 
 std::vector<Vertex> tableau;
 static const float GL_VIEW_SIZE = 6.;
@@ -138,6 +137,11 @@ int main()
     {
         return -1;
     }
+    // test person and voiture header/src files
+    Person p(20);
+    p.get_age();
+    Voiture v(50);
+    v.get_speed();
 
     /* Callback to a function if an error is rised by GLFW */
     glfwSetErrorCallback(onError);

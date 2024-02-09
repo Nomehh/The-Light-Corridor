@@ -1,7 +1,11 @@
 #pragma once
 
-struct Person
+class Person
 {
-    int age;
-    char name[50];
+public:
+    Person(int age);
+    void get_age();
+
+private:
+    int _age;
 };
