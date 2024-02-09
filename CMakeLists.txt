@@ -32,7 +32,7 @@ include_directories(third_party/glad/include)
 set(ALL_LIBRARIES ${ALL_LIBRARIES} glad)
 
 ##################################################
-file(GLOB HEADER_FILES include/*.hpp)
+#file(GLOB HEADER_FILES include/*.hpp) unecessary ?
 file(GLOB EXT_SRC_FILES include/*.cpp)
 file(GLOB EXE_SRC_FILES src/*.cpp)
 #file(GLOB_RECURSE SHADER_FILES *.glsl)
@@ -44,7 +44,7 @@ foreach(EXE_SRC_FILE ${EXE_SRC_FILES})
 	set(OUTPUT ${DIR}_${FILE})
 	#    add_executable(${OUTPUT} ${SRC_FILE} ${HEADER_FILES} ${SHADER_FILES})
 	set(SRC_FILES ${EXT_SRC_FILES} ${EXE_SRC_FILE})
-	add_executable(${OUTPUT} ${SRC_FILES} ${HEADER_FILES})
+	add_executable(${OUTPUT} ${SRC_FILES})
 	target_link_libraries(${OUTPUT} ${ALL_LIBRARIES})
 	set_target_properties(${OUTPUT} PROPERTIES
 		CXX_STANDARD 11
