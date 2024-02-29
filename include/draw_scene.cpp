@@ -97,7 +97,7 @@ void drawPan()
     glPopMatrix();
 }
 
-void drawMenu(float alpha, float beta)
+void drawMenu(float alpha, float beta) // add choiche as parameter
 {
     first3Circles(alpha);
     second3Circles(-alpha);
@@ -105,11 +105,14 @@ void drawMenu(float alpha, float beta)
     next2CirclesWithDotted(alpha);
     firstCircleWithPlanet(-alpha);
     secondCircleWithPlanet(-beta);
+    int choice = 3;
+    showChoice(choice, alpha);
     twoDottedSquares();
     mainCircle();
     nextCircleWithPlanet(-alpha, beta);
     nextMovingDottedCircle(beta);
     threeOutersCircles(alpha, -alpha);
+    displayJouerButton();
 }
 
 void first3Circles(float alpha)
@@ -447,6 +450,108 @@ void threeOutersCircles(float angle, float angle2)
             glPopMatrix();
         }
         glPopMatrix();
+    }
+    glPopMatrix();
+}
+
+void displayJouerButton()
+{
+}
+
+void showChoice(unsigned int choice, float angle)
+{
+    switch (choice)
+    {
+    case 0:
+    {
+        glPushMatrix();
+        {
+            glTranslatef(3.61, -3.61, 0);
+            glScalef(0.3, 0.3, 0.3);
+            drawChoice();
+        }
+        glPopMatrix();
+        break;
+    }
+    case 1:
+    {
+        glPushMatrix();
+        {
+
+            glTranslatef(-3.61, -3.61, 0);
+            glScalef(0.3, 0.3, 0.3);
+            drawChoice();
+        }
+        glPopMatrix();
+        break;
+    }
+    case 2:
+    {
+        glPushMatrix();
+        {
+            glTranslatef(-3.61, 3.61, 0);
+            glScalef(0.3, 0.3, 0.3);
+            drawChoice();
+        }
+        glPopMatrix();
+        break;
+    }
+    case 3:
+    {
+        glPushMatrix();
+        {
+            glTranslatef(3.61, 3.61, 0);
+            glScalef(0.3, 0.3, 0.3);
+            drawChoice();
+        }
+        glPopMatrix();
+        break;
+    }
+    }
+}
+
+void drawChoice()
+{
+    glPushMatrix();
+    { // plenty circle
+        glColor3f(1., 1., 1.);
+        glScalef(0.7, 0.7, 0);
+        drawCircle();
+    }
+    glPopMatrix();
+    glPushMatrix();
+    { // plenty orbit
+        glColor3f(1., 1., 1.);
+        glScalef(1.2, 1.2, 0);
+        myDrawCircle();
+    }
+    glPopMatrix();
+    glPushMatrix();
+    { // plenty orbit
+        glColor3f(1., 1., 1.);
+        glScalef(1.4, 1.4, 0);
+        myDrawCircle();
+    }
+    glPopMatrix();
+    glPushMatrix();
+    { // plenty orbit
+        glColor3f(1., 1., 1.);
+        glScalef(1.6, 1.6, 0);
+        myDrawCircle();
+    }
+    glPopMatrix();
+    glPushMatrix();
+    {
+        glColor3f(1., 1., 1.);
+        glScalef(1.8, 1.8, 0);
+        myDrawCircle();
+    }
+    glPopMatrix();
+    glPushMatrix();
+    {
+        glColor3f(1., 1., 1.);
+        glScalef(2, 2, 0);
+        drawDottedCircle(40);
     }
     glPopMatrix();
 }

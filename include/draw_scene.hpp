@@ -36,3 +36,9 @@ void nextCircleWithPlanet(float angle, float angle2);
 void nextMovingDottedCircle(float angle);
 
 void threeOutersCircles(float angle, float angle2);
+
+void displayJouerButton();
+
+void showChoice(unsigned int choice, float angle);
+
+void drawChoice();

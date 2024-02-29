@@ -148,13 +148,11 @@ int main(int /* argc */, char ** /* argv */)
     glPointSize(5.0);
     glEnable(GL_DEPTH_TEST);
 
-    double i = 0.;
     double alpha = 0.;
     double beta = 20;
-    double delta = -20;
     double step_alpha = 0.10;
     double step_beta = 0.05;
-    float step_rad = 2 * M_PI / (float)NB_SEG_CIRCLE;
+    // float step_rad = 2 * M_PI / (float)NB_SEG_CIRCLE;
     /* Loop until the user closes the window */
 
     while (!glfwWindowShouldClose(window))
