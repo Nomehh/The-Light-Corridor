@@ -97,16 +97,35 @@ void drawPan()
     glPopMatrix();
 }
 
-void drawMenu(float alpha, float beta) // add choiche as parameter
+void drawMenu(float alpha, float beta, int *previous_choice, int *choice, double *move_choice)
 {
+    bool shouldMove = *previous_choice != *choice;
+    bool moveTrigo = (*choice == 1 && *previous_choice == 0);
+
+    // Calculate the new move choice
+    if (shouldMove && moveTrigo && *move_choice < 90)
+    {
+        *move_choice += 1;
+    }
+    else if (shouldMove && !moveTrigo && *move_choice > -45)
+    {
+        *move_choice -= 1;
+    }
+    else
+    {
+        // No need to move, update previous choice
+        *previous_choice = *choice;
+    }
+    // Draw the menu at the current position
+    showChoice(*choice, *move_choice);
+
     first3Circles(alpha);
     second3Circles(-alpha);
     next2Circles();
     next2CirclesWithDotted(alpha);
     firstCircleWithPlanet(-alpha);
     secondCircleWithPlanet(-beta);
-    int choice = 3;
-    showChoice(choice, alpha);
+
     twoDottedSquares();
     mainCircle();
     nextCircleWithPlanet(-alpha, beta);
@@ -458,59 +477,19 @@ void displayJouerButton()
 {
 }
 
-void showChoice(unsigned int choice, float angle)
+void showChoice(int choice, float angle)
 {
-    switch (choice)
-    {
-    case 0:
-    {
-        glPushMatrix();
-        {
-            glTranslatef(3.61, -3.61, 0);
-            glScalef(0.3, 0.3, 0.3);
-            drawChoice();
-        }
-        glPopMatrix();
-        break;
-    }
-    case 1:
-    {
-        glPushMatrix();
-        {
 
-            glTranslatef(-3.61, -3.61, 0);
-            glScalef(0.3, 0.3, 0.3);
-            drawChoice();
-        }
-        glPopMatrix();
-        break;
-    }
-    case 2:
+    glPushMatrix();
     {
-        glPushMatrix();
-        {
-            glTranslatef(-3.61, 3.61, 0);
-            glScalef(0.3, 0.3, 0.3);
-            drawChoice();
-        }
-        glPopMatrix();
-        break;
+        glTranslatef(5.13 * cos(angle * M_PI / 180), 5.13 * sin(angle * M_PI / 180), 0);
+        glScalef(0.3, 0.3, 0.3);
+        drawChoice(angle);
     }
-    case 3:
-    {
-        glPushMatrix();
-        {
-            glTranslatef(3.61, 3.61, 0);
-            glScalef(0.3, 0.3, 0.3);
-            drawChoice();
-        }
-        glPopMatrix();
-        break;
-    }
-    }
+    glPopMatrix();
 }
 
-void drawChoice()
+void drawChoice(float angle)
 {
     glPushMatrix();
     { // plenty circle
@@ -549,6 +528,7 @@ void drawChoice()
     glPopMatrix();
     glPushMatrix();
     {
+        glRotatef(angle, 0, 0, 1);
         glColor3f(1., 1., 1.);
         glScalef(2, 2, 0);
         drawDottedCircle(40);

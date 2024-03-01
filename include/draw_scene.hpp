@@ -4,6 +4,7 @@
 #include <GL/gl.h>
 #include <iostream>
 #include <cmath>
+#include <memory>
 
 void drawFrame();
 
@@ -13,7 +14,7 @@ void drawArm();
 
 void drawPan();
 
-void drawMenu(float alpha, float beta);
+void drawMenu(float alpha, float beta, int *previous_choice, int *choice, double *move_choice);
 
 void first3Circles(float alpha);
 
@@ -39,6 +40,6 @@ void threeOutersCircles(float angle, float angle2);
 
 void displayJouerButton();
 
-void showChoice(unsigned int choice, float angle);
+void showChoice(int choice, float angle);
 
-void drawChoice();
+void drawChoice(float angle);
