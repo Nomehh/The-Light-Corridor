@@ -96,36 +96,36 @@ void drawPan()
     }
     glPopMatrix();
 }
-
-void drawMenu(float alpha, float beta, int *previous_choice, int *choice, double *move_choice)
+double findShortestPath(double startPos, double targetPos)
 {
-    bool shouldMove = *previous_choice != *choice;
-    bool moveTrigo = (*choice == 1 && *previous_choice == 0);
+    double moveTrigo = targetPos - startPos;
+    double moveClockwise = startPos - targetPos + 2 * M_PI;
 
-    // Calculate the new move choice
-    if (shouldMove && moveTrigo && *move_choice < 90)
+    if (moveTrigo < moveClockwise)
     {
-        *move_choice += 1;
-    }
-    else if (shouldMove && !moveTrigo && *move_choice > -45)
-    {
-        *move_choice -= 1;
+        return fmod(moveTrigo, 2 * M_PI);
     }
     else
     {
-        // No need to move, update previous choice
-        *previous_choice = *choice;
+        return -fmod(moveClockwise, 2 * M_PI);
     }
-    // Draw the menu at the current position
-    showChoice(*choice, *move_choice);
+}
 
+void drawMenu(float alpha, float beta, double *startPos, double *targetPos)
+{
+
+    double path = findShortestPath(*startPos, *targetPos);
+
+    path /= 100;
+    *startPos += path;
+
+    showChoice(*startPos, -alpha - beta);
     first3Circles(alpha);
     second3Circles(-alpha);
     next2Circles();
     next2CirclesWithDotted(alpha);
     firstCircleWithPlanet(-alpha);
     secondCircleWithPlanet(-beta);
-
     twoDottedSquares();
     mainCircle();
     nextCircleWithPlanet(-alpha, beta);
@@ -477,12 +477,14 @@ void displayJouerButton()
 {
 }
 
-void showChoice(int choice, float angle)
+void showChoice(double pos, float angle)
 {
 
     glPushMatrix();
     {
-        glTranslatef(5.13 * cos(angle * M_PI / 180), 5.13 * sin(angle * M_PI / 180), 0);
+        // translate to the right position with radiant
+        glRotatef(135, 0, 0, 1);
+        glTranslatef(5.13 * cos(pos), 5.13 * sin(pos), 0);
         glScalef(0.3, 0.3, 0.3);
         drawChoice(angle);
     }

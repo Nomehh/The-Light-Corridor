@@ -24,7 +24,10 @@ static int flag_filaire = 0;
 static int flag_animate_rot_scale = 0;
 static int flag_animate_rot_arm = 0;
 
+/* Position of the choice */
 std::unique_ptr<int> choice(new int(0));
+std::unique_ptr<double> startPos(new double(0));
+std::unique_ptr<double> targetPos(new double(0));
 
 /* Error handling function */
 void onError(int error, const char *description)
@@ -62,19 +65,31 @@ void onKey(GLFWwindow *window, int key, int /* scancode */, int action, int /* m
         break;
     case GLFW_KEY_A: // q
         if (is_pressed)
+        {
             *choice = 1;
+            *targetPos = M_PI;
+        }
         break;
     case GLFW_KEY_W: // z
         if (is_pressed)
+        {
             *choice = 2;
+            *targetPos = M_PI / 2.;
+        }
         break;
     case GLFW_KEY_D:
         if (is_pressed)
+        {
             *choice = 3;
+            *targetPos = 0;
+        }
         break;
     case GLFW_KEY_S:
         if (is_pressed)
+        {
             *choice = 0;
+            *targetPos = 3 * M_PI / 2.;
+        }
         break;
     case GLFW_KEY_R:
         if (is_pressed)
@@ -170,10 +185,10 @@ int main(int /* argc */, char ** /* argv */)
     double beta = 20;
     double step_alpha = 0.10;
     double step_beta = 0.05;
-    std::unique_ptr<int> previous_choice(new int(0));
-    std::unique_ptr<double> move_choice(new double(45.));
+
     // float step_rad = 2 * M_PI / (float)NB_SEG_CIRCLE;
     /* Loop until the user closes the window */
+    int width, height, numComponents;
 
     while (!glfwWindowShouldClose(window))
     {
@@ -208,7 +223,7 @@ int main(int /* argc */, char ** /* argv */)
         // drawDottedCircle();
         // drawDottedSquare();
 
-        drawMenu(alpha, beta, previous_choice.get(), choice.get(), move_choice.get());
+        drawMenu(alpha, beta, startPos.get(), targetPos.get());
 
         /* Scene rendering */
         // drawFrame();
