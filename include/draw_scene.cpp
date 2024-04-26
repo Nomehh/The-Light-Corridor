@@ -96,18 +96,21 @@ void drawPan()
     }
     glPopMatrix();
 }
+
 double findShortestPath(double startPos, double targetPos)
 {
-    double moveTrigo = targetPos - startPos;
-    double moveClockwise = startPos - targetPos + 2 * M_PI;
+    double moveTrigo = fmod(targetPos - startPos + 2 * M_PI, 2 * M_PI);
+    double moveClockwise = fmod(startPos - targetPos + 2 * M_PI, 2 * M_PI);
 
     if (moveTrigo < moveClockwise)
     {
-        return fmod(moveTrigo, 2 * M_PI);
+
+        return moveTrigo;
     }
     else
     {
-        return -fmod(moveClockwise, 2 * M_PI);
+
+        return -moveClockwise;
     }
 }
 
@@ -116,7 +119,7 @@ void drawMenu(float alpha, float beta, double *startPos, double *targetPos)
 
     double path = findShortestPath(*startPos, *targetPos);
 
-    path /= 100;
+    path /= 80;
     *startPos += path;
 
     showChoice(*startPos, -alpha - beta);
@@ -475,6 +478,30 @@ void threeOutersCircles(float angle, float angle2)
 
 void displayJouerButton()
 {
+    // Activer la texture
+    glEnable(GL_TEXTURE_2D);
+
+    glPushMatrix();
+    {
+        glBegin(GL_QUADS);
+        // Associer les coordonnées de texture aux sommets
+        glTexCoord2f(0.0, 1.0); // Coin inférieur gauche (inversé verticalement)
+        glVertex3f(-1.0, -1.0, 0.0);
+
+        glTexCoord2f(1.0, 1.0); // Coin inférieur droit (inversé verticalement)
+        glVertex3f(1.0, -1.0, 0.0);
+
+        glTexCoord2f(1.0, 0.0); // Coin supérieur droit (inversé verticalement)
+        glVertex3f(1.0, 1.0, 0.0);
+
+        glTexCoord2f(0.0, 0.0); // Coin supérieur gauche (inversé verticalement)
+        glVertex3f(-1.0, 1.0, 0.0);
+        glEnd();
+    }
+    glPopMatrix();
+
+    // Désactiver la texture
+    glDisable(GL_TEXTURE_2D);
 }
 
 void showChoice(double pos, float angle)

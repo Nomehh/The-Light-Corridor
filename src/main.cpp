@@ -7,8 +7,10 @@
 #include <iostream>
 #include <cmath>
 
+#define STB_IMAGE_IMPLEMENTATION
 #include "../include/3D_tools.hpp"
 #include "../include/draw_scene.hpp"
+#include "../include/stb_image.h"
 
 /* Window properties */
 static const unsigned int WINDOW_WIDTH = 1920;
@@ -178,6 +180,24 @@ int main(int /* argc */, char ** /* argv */)
 
     onWindowResized(window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
+    // load triforce
+    int x, y, c;
+    auto img = stbi_load("../assets/play_button.jpg", &x, &y, &c, 0);
+
+    if (img == nullptr)
+    {
+        std::cerr << "Error loading image" << std::endl;
+        return -1;
+    }
+
+    glEnable(GL_TEXTURE_2D);
+
+    GLuint texture = 0;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, img);
+
     glPointSize(5.0);
     glEnable(GL_DEPTH_TEST);
 
@@ -188,7 +208,6 @@ int main(int /* argc */, char ** /* argv */)
 
     // float step_rad = 2 * M_PI / (float)NB_SEG_CIRCLE;
     /* Loop until the user closes the window */
-    int width, height, numComponents;
 
     while (!glfwWindowShouldClose(window))
     {
@@ -226,46 +245,7 @@ int main(int /* argc */, char ** /* argv */)
         drawMenu(alpha, beta, startPos.get(), targetPos.get());
 
         /* Scene rendering */
-        // drawFrame();
-        // glPushMatrix();
-        // {
-        // 	glRotatef(alpha++, 0, 0, 1);
-        // 	drawBase();
-
-        // 	glPushMatrix();
-        // 	{
-        // 		glTranslatef(0, 0, 10);
-        // 		drawArm();
-        // 	}
-
-        // 	glPopMatrix();
-
-        // 	glPushMatrix();
-        // 	{
-        // 		glColor3f(1, 0.0, 0);
-        // 		glTranslatef(2 * cos(i * step_rad), 2 * sin(i * step_rad), 5);
-        // 		drawSphere();
-        // 		i++;
-        // 	}
-        // 	glPopMatrix();
-
-        // 	glPushMatrix();
-        // 	{
-
-        // 		glTranslatef(0, 10, 10);
-        // 		glRotatef(beta, 0, 1, 0);
-        // 		drawPan();
-        // 	}
-        // 	glPopMatrix();
-        // 	glPushMatrix();
-        // 	{
-        // 		glTranslatef(0, -10, 10);
-        // 		glRotatef(delta, 0, 1, 0);
-        // 		drawPan();
-        // 	}
-        // }
-        // glPopMatrix();
-        // glPopMatrix();
+        // TODO
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -286,7 +266,10 @@ int main(int /* argc */, char ** /* argv */)
         alpha += step_alpha;
         beta += step_beta;
     }
-
+    glDisable(GL_TEXTURE_2D);
+    stbi_image_free(img);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDeleteTextures(1, &texture);
     glfwTerminate();
     return 0;
 }
