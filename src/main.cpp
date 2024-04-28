@@ -51,28 +51,14 @@ void onWindowResized(GLFWwindow * /* window */, int width, int height)
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-
-    if (aspectRatio > 1)
-    {
-        glOrtho(
-            -GL_VIEW_SIZE / 2. * aspectRatio, GL_VIEW_SIZE / 2. * aspectRatio,
-            -GL_VIEW_SIZE / 2., GL_VIEW_SIZE / 2., -1, 1);
-    }
-    else
-    {
-        glOrtho(
-            -GL_VIEW_SIZE / 2., GL_VIEW_SIZE / 2.,
-            -GL_VIEW_SIZE / 2. / aspectRatio, GL_VIEW_SIZE / 2. / aspectRatio, -1, 1);
-    }
+    setPerspective(60.f, aspectRatio, Z_NEAR, Z_FAR);
+    glMatrixMode(GL_MODELVIEW);
 }
 
 static void cursor_position_callback(GLFWwindow *window, double xpos, double ypos)
 {
-
-    double x, z;
-    glfwGetCursorPos(window, &x, &z);
-    *cursX = GL_VIEW_SIZE * ((float)-x / (WINDOW_WIDTH) + 0.5);
-    *cursZ = GL_VIEW_SIZE * ((float)-z / (WINDOW_HEIGHT) + 0.5);
+    *cursX = std::max(0., std::min(GL_VIEW_SIZE * (-xpos / (WINDOW_WIDTH) + 0.5), (double)WINDOW_WIDTH));
+    *cursZ = std::max(0., std::min(GL_VIEW_SIZE * (-ypos / (WINDOW_HEIGHT) + 0.5), (double)WINDOW_HEIGHT));
 }
 
 void startGame(GLFWwindow *window)
@@ -244,7 +230,7 @@ int main(int /* argc */, char ** /* argv */)
     // glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
     glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 
-    window = glfwCreateWindow(mode->width, mode->height, "My Title", monitor, NULL);
+    window = glfwCreateWindow(mode->width, mode->height, "Light Corridor", monitor, NULL);
     glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
 
     std::cout << "Width : " << mode->width << " Height : " << mode->height << " Framerate : " << mode->refreshRate << std::endl;
@@ -326,18 +312,21 @@ int main(int /* argc */, char ** /* argv */)
         /* Initial scenery setup */
 
         glPushMatrix();
-        glScalef(5.0, 5.0, 1.0);
-        glPushMatrix();
-        glTranslatef(0.0, 0.0, -0.01);
-        glScalef(100.0, 100.0, 1.0);
-        glColor3f(0.0, 0.0, 0.);
-        drawSquare();
-        glBegin(GL_POINTS);
-        glColor3f(1.0, 1.0, 0.0);
-        glVertex3f(0.0, 0.0, 0.0);
-        glEnd();
-        glPopMatrix();
-
+        drawFrame();
+        glRotatef(90., 1, 0, 0);
+        glRotatef(225., 0, 0, 1);
+        {
+            glPushMatrix();
+            glTranslatef(0.0, 0.0, -0.01);
+            glScalef(100.0, 100.0, 1.0);
+            glColor3f(0.0, 0.0, 0.);
+            drawSquare();
+            glBegin(GL_POINTS);
+            glColor3f(1.0, 1.0, 0.0);
+            glVertex3f(0.0, 0.0, 0.0);
+            glEnd();
+            glPopMatrix();
+        }
         drawMenu(alpha, beta, startPos.get(), targetPos.get());
         glPopMatrix();
 

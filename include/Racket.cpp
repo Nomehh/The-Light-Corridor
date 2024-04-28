@@ -20,14 +20,14 @@ Racket::Racket(float x, float z) : _racket{std::vector<HCoordinates>{
 
 void Racket::draw() const
 {
-    _racket.drawRacket();
+    _racket.draw();
 }
 
 void Racket::updatePos(float x, float z)
 {
     auto &coordinates = _racket.get_vertices();
-    coordinates[0] = HCoordinates{x + RACKET_SIZE, 1.3f, z + RACKET_SIZE};
-    coordinates[1] = HCoordinates{x - RACKET_SIZE, 1.3f, z + RACKET_SIZE};
-    coordinates[2] = HCoordinates{x - RACKET_SIZE, 1.3f, z - RACKET_SIZE};
-    coordinates[3] = HCoordinates{x + RACKET_SIZE, 1.3f, z - RACKET_SIZE};
+    coordinates[0] = HCoordinates{x + RACKET_SIZE, 8.f, z + RACKET_SIZE};
+    coordinates[1] = HCoordinates{x - RACKET_SIZE, 8.f, z + RACKET_SIZE};
+    coordinates[2] = HCoordinates{x - RACKET_SIZE, 8.f, z - RACKET_SIZE};
+    coordinates[3] = HCoordinates{x + RACKET_SIZE, 8.f, z - RACKET_SIZE};
 }
