@@ -27,8 +27,6 @@ static const double FRAMERATE_IN_SECONDS = 1. / 144.;
 
 /* IHM flag */
 static int flag_filaire = 0;
-static int flag_animate_rot_scale = 0;
-static int flag_animate_rot_arm = 0;
 static const float GL_VIEW_SIZE = 100.;
 
 /* Position of the choice */
@@ -57,8 +55,9 @@ void onWindowResized(GLFWwindow * /* window */, int width, int height)
 
 static void cursor_position_callback(GLFWwindow *window, double xpos, double ypos)
 {
-    *cursX = std::max(0., std::min(GL_VIEW_SIZE * (-xpos / (WINDOW_WIDTH) + 0.5), (double)WINDOW_WIDTH));
-    *cursZ = std::max(0., std::min(GL_VIEW_SIZE * (-ypos / (WINDOW_HEIGHT) + 0.5), (double)WINDOW_HEIGHT));
+    // Convertir les coordonnées de l'écran en coordonnées normalisées
+    *cursX = 4 * (-xpos / (WINDOW_WIDTH) + 0.5);
+    *cursZ = 2 * (-ypos / (WINDOW_HEIGHT) + 0.5);
 }
 
 void startGame(GLFWwindow *window)
@@ -85,17 +84,9 @@ void startGame(GLFWwindow *window)
         std::cout << "X : " << *cursX << " Z : " << *cursZ << std::endl;
 
         racket.updatePos(*cursX, *cursZ);
-        racket.print();
-        /* Initial scenery setup */
-        glPushMatrix();
-        {
 
-            for (auto &wall : corridor)
-            {
-                wall.draw();
-            }
-        }
-        glPopMatrix();
+        /* Initial scenery setup */
+        racket.draw();
 
         /* Scene rendering */
         // TODO
@@ -161,14 +152,6 @@ void onKey(GLFWwindow *window, int key, int /* scancode */, int action, int /* m
             *choice = 0;
             *targetPos = 3 * M_PI / 2.;
         }
-        break;
-    case GLFW_KEY_R:
-        if (is_pressed)
-            flag_animate_rot_arm = 1 - flag_animate_rot_arm;
-        break;
-    case GLFW_KEY_T:
-        if (is_pressed)
-            flag_animate_rot_scale = 1 - flag_animate_rot_scale;
         break;
     case GLFW_KEY_J:
         if (dist_zoom < 60.0f)
@@ -259,8 +242,6 @@ int main(int /* argc */, char ** /* argv */)
     glfwSetCursorPosCallback(window, cursor_position_callback);
     glfwSwapInterval(1); // synchronisation verticale
 
-    onWindowResized(window, WINDOW_WIDTH, WINDOW_HEIGHT);
-
     // load triforce
     int x, y, c;
     auto img = stbi_load("../assets/play_button.jpg", &x, &y, &c, 0);
@@ -290,7 +271,7 @@ int main(int /* argc */, char ** /* argv */)
 
     // float step_rad = 2 * M_PI / (float)NB_SEG_CIRCLE;
     /* Loop until the user closes the window */
-
+    onWindowResized(window, WINDOW_WIDTH, WINDOW_HEIGHT);
     while (!glfwWindowShouldClose(window))
     {
         /* Get time (in second) at loop beginning */

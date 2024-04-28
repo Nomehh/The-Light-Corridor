@@ -7,7 +7,7 @@ float dist_zoom = 15.f; // Distance between origin and viewpoint
 
 float gameTheta = 90.0f;	// Angle between x axis and viewpoint
 float gamePhy = 90.0f;		// Angle between z axis and viewpoint
-float gameDist_zoom = 15.f; // Distance between origin and viewpoint
+float gameDist_zoom = 16.f; // Distance between origin and viewpoint
 
 struct v3d
 {

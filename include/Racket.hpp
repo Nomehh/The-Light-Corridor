@@ -7,7 +7,8 @@
 #include "GL/gl.h"
 #include <iostream>
 
-#define RACKET_SIZE 50.f
+#define RACKET_SIZE 0.2f
+#define DIST 13.f
 
 class Racket
 {
