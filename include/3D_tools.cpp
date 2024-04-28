@@ -1,9 +1,13 @@
 #include "3D_tools.hpp"
 
 /* Camera parameters and functions */
-float theta = 45.0f;	 // Angle between x axis and viewpoint
-float phy = 0.1f;		 // Angle between z axis and viewpoint
-float dist_zoom = 15.0f; // Distance between origin and viewpoint
+float theta = 45.0f;	// Angle between x axis and viewpoint
+float phy = 0.1f;		// Angle between z axis and viewpoint
+float dist_zoom = 0.1f; // Distance between origin and viewpoint
+
+float gameTheta = 90.0f;	// Angle between x axis and viewpoint
+float gamePhy = 90.0f;		// Angle between z axis and viewpoint
+float gameDist_zoom = 0.1f; // Distance between origin and viewpoint
 
 struct v3d
 {
@@ -70,7 +74,7 @@ void setPerspective(float fovy, float a_ratio, float z_near, float z_far)
 	// gluPerspective(fovy,a_ratio,z_near,z_far);
 }
 
-void setCamera()
+void setMenuCamera()
 {
 	v3d eye{dist_zoom * cosf(toRad(theta)) * sinf(toRad(phy)),
 			dist_zoom * sinf(toRad(theta)) * sinf(toRad(phy)),
@@ -80,6 +84,57 @@ void setCamera()
 	v3d z_axis{cosf(toRad(theta)) * sinf(toRad(phy)),
 			   sinf(toRad(theta)) * sinf(toRad(phy)),
 			   cosf(toRad(phy))};
+	z_axis.normalize();
+	// z_axis.display();
+
+	v3d up_axis{0., 0., 1.};
+	v3d x_axis;
+	x_axis.cross(up_axis, z_axis);
+	x_axis.normalize();
+	// x_axis.display();
+	v3d y_axis;
+	y_axis.cross(z_axis, x_axis);
+	y_axis.normalize();
+	// y_axis.display();
+
+	float mat[16];
+	mat[0] = x_axis.x;
+	mat[4] = x_axis.y;
+	mat[8] = x_axis.z;
+	mat[12] = -1.0 * eye.dot(x_axis);
+
+	mat[1] = y_axis.x;
+	mat[5] = y_axis.y;
+	mat[9] = y_axis.z;
+	mat[13] = -1.0 * eye.dot(y_axis);
+
+	mat[2] = z_axis.x;
+	mat[6] = z_axis.y;
+	mat[10] = z_axis.z;
+	mat[14] = -1.0 * eye.dot(z_axis);
+
+	mat[3] = 0.0;
+	mat[7] = 0.0;
+	mat[11] = 0.0;
+	mat[15] = 1.0;
+
+	glMultMatrixf(mat);
+}
+
+void setGameCamera()
+{
+	v3d eye{
+		dist_zoom * cosf(toRad(gameTheta)) * sinf(toRad(gamePhy)),
+		dist_zoom * sinf(toRad(gameTheta)) * sinf(toRad(gamePhy)),
+		dist_zoom * cosf(toRad(gamePhy)),
+	};
+
+	// eye.display();
+	v3d z_axis{
+		cosf(toRad(gameTheta)) * sinf(toRad(gamePhy)),
+		sinf(toRad(gameTheta)) * sinf(toRad(gamePhy)),
+		cosf(toRad(gamePhy)),
+	};
 	z_axis.normalize();
 	// z_axis.display();
 
@@ -186,7 +241,7 @@ void drawDottedCircle(unsigned int nb_points)
 {
 	glPointSize(1.5);
 	glBegin(GL_POINTS);
-	for (int i = 0; i <= nb_points; i++)
+	for (unsigned int i = 0; i <= nb_points; i++)
 	{
 		float angle = 2.0f * M_PI * (float)i / (float)nb_points;
 		glVertex3f(cos(angle), sin(angle), 0.0f);

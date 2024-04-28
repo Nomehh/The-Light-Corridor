@@ -6,16 +6,20 @@
 #include <GL/gl.h>
 #include <iostream>
 #include <cmath>
+#include <memory>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "../include/3D_tools.hpp"
 #include "../include/draw_scene.hpp"
-#include "../include/stb_image.h"
+#include "../third_party/stb_image.h"
+#include "../include/Racket.hpp"
+#include "../include/Ball.hpp"
+#include "../include/Wall.hpp"
 
 /* Window properties */
 static const unsigned int WINDOW_WIDTH = 1920;
 static const unsigned int WINDOW_HEIGHT = 1080;
-static const char WINDOW_TITLE[] = "TD04 Ex01";
+static const char WINDOW_TITLE[] = "The Light Corridor";
 static float aspectRatio = 1.0;
 
 /* Minimal time wanted between two images */
@@ -25,11 +29,15 @@ static const double FRAMERATE_IN_SECONDS = 1. / 144.;
 static int flag_filaire = 0;
 static int flag_animate_rot_scale = 0;
 static int flag_animate_rot_arm = 0;
+static const float GL_VIEW_SIZE = 100.;
 
 /* Position of the choice */
 std::unique_ptr<int> choice(new int(0));
 std::unique_ptr<double> startPos(new double(0));
 std::unique_ptr<double> targetPos(new double(0));
+
+std::unique_ptr<float> cursX(new float());
+std::unique_ptr<float> cursZ(new float());
 
 /* Error handling function */
 void onError(int error, const char *description)
@@ -40,12 +48,87 @@ void onError(int error, const char *description)
 void onWindowResized(GLFWwindow * /* window */, int width, int height)
 {
     aspectRatio = width / (float)height;
-
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    setPerspective(60.0, aspectRatio, Z_NEAR, Z_FAR);
-    glMatrixMode(GL_MODELVIEW);
+
+    if (aspectRatio > 1)
+    {
+        glOrtho(
+            -GL_VIEW_SIZE / 2. * aspectRatio, GL_VIEW_SIZE / 2. * aspectRatio,
+            -GL_VIEW_SIZE / 2., GL_VIEW_SIZE / 2., -1, 1);
+    }
+    else
+    {
+        glOrtho(
+            -GL_VIEW_SIZE / 2., GL_VIEW_SIZE / 2.,
+            -GL_VIEW_SIZE / 2. / aspectRatio, GL_VIEW_SIZE / 2. / aspectRatio, -1, 1);
+    }
+}
+
+static void cursor_position_callback(GLFWwindow *window, double xpos, double ypos)
+{
+
+    double x, z;
+    glfwGetCursorPos(window, &x, &z);
+    *cursX = GL_VIEW_SIZE * ((float)-x / (WINDOW_WIDTH) + 0.5);
+    *cursZ = GL_VIEW_SIZE * ((float)-z / (WINDOW_HEIGHT) + 0.5);
+}
+
+void startGame(GLFWwindow *window)
+{
+    std::vector<Wall> corridor = Wall::initial_corridor();
+    Racket racket;
+    while (!glfwWindowShouldClose(window))
+    { /* Get time (in second) at loop beginning */
+        double startTime = glfwGetTime();
+
+        /* Cleaning buffers and setting Matrix Mode */
+        glClearColor(0.2, 0.0, 0.0, 0.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        if (flag_filaire)
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        else
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        setGameCamera();
+
+        std::cout << "X : " << *cursX << " Z : " << *cursZ << std::endl;
+
+        racket.updatePos(*cursX, *cursZ);
+        racket.print();
+        /* Initial scenery setup */
+        glPushMatrix();
+        {
+
+            for (auto &wall : corridor)
+            {
+                wall.draw();
+            }
+        }
+        glPopMatrix();
+
+        /* Scene rendering */
+        // TODO
+        drawFrame();
+
+        /* Swap front and back buffers */
+        glfwSwapBuffers(window);
+
+        /* Poll for and process events */
+        glfwPollEvents();
+
+        /* Elapsed time computation from loop begining */
+        double elapsedTime = glfwGetTime() - startTime;
+        /* If to few time is spend vs our wanted FPS, we wait */
+        if (elapsedTime < FRAMERATE_IN_SECONDS)
+        {
+            glfwWaitEventsTimeout(FRAMERATE_IN_SECONDS - elapsedTime);
+        }
+    }
 }
 
 void onKey(GLFWwindow *window, int key, int /* scancode */, int action, int /* mods */)
@@ -127,6 +210,17 @@ void onKey(GLFWwindow *window, int key, int /* scancode */, int action, int /* m
     case GLFW_KEY_RIGHT:
         theta += 5;
         break;
+
+    case GLFW_KEY_ENTER:
+        switch (*choice)
+        {
+        case 2:
+            startGame(window);
+            break;
+        default:
+            std::cout << "Touche non gérée" << std::endl;
+        }
+        break; // Add break statement to prevent fall-through
     default:
         std::cout << "Touche non gérée" << std::endl;
     }
@@ -176,6 +270,7 @@ int main(int /* argc */, char ** /* argv */)
 
     glfwSetWindowSizeCallback(window, onWindowResized);
     glfwSetKeyCallback(window, onKey);
+    glfwSetCursorPosCallback(window, cursor_position_callback);
     glfwSwapInterval(1); // synchronisation verticale
 
     onWindowResized(window, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -191,6 +286,7 @@ int main(int /* argc */, char ** /* argv */)
     }
 
     glEnable(GL_TEXTURE_2D);
+    glDisable(GL_TEXTURE_2D);
 
     GLuint texture = 0;
     glGenTextures(1, &texture);
@@ -225,9 +321,12 @@ int main(int /* argc */, char ** /* argv */)
 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-        setCamera();
+        setMenuCamera();
 
         /* Initial scenery setup */
+
+        glPushMatrix();
+        glScalef(5.0, 5.0, 1.0);
         glPushMatrix();
         glTranslatef(0.0, 0.0, -0.01);
         glScalef(100.0, 100.0, 1.0);
@@ -239,13 +338,8 @@ int main(int /* argc */, char ** /* argv */)
         glEnd();
         glPopMatrix();
 
-        // drawDottedCircle();
-        // drawDottedSquare();
-
         drawMenu(alpha, beta, startPos.get(), targetPos.get());
-
-        /* Scene rendering */
-        // TODO
+        glPopMatrix();
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

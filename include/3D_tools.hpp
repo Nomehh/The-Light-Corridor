@@ -15,7 +15,8 @@ extern float theta;     // Angle between x axis and viewpoint
 extern float phy;       // Angle between z axis and viewpoint
 extern float dist_zoom; // Distance between origin and viewpoint
 
-void setCamera();
+void setMenuCamera();
+void setGameCamera();
 void setPerspective(float fovy, float a_ratio, float z_near, float z_far);
 
 /* Draw cannonic objet functions */

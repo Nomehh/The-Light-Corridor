@@ -8,12 +8,6 @@
 
 void drawFrame();
 
-void drawBase();
-
-void drawArm();
-
-void drawPan();
-
 void drawMenu(float alpha, float beta, double *move_choice, double *last_move);
 
 void first3Circles(float alpha);

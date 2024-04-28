@@ -18,85 +18,6 @@ void drawFrame()
     glEnd();
 }
 
-void drawBase()
-{
-    glPushMatrix();
-    {
-        // on dessine la base du cercle
-        glScalef(1.5, 1.5, 0);
-        glColor3f(235 / 255., 207 / 255., 52 / 255.);
-        drawCircle();
-    }
-    glPopMatrix();
-
-    glPushMatrix();
-    {
-        // on dessine la base du cercle
-        glScalef(1, 1, 10);
-        glColor3f(235 / 255., 207 / 255., 52 / 255.);
-        drawCone();
-    }
-    glPopMatrix();
-}
-
-void drawArm()
-{
-    glColor3f(245 / 255., 164 / 255., 66 / 255.);
-    glPushMatrix();
-    {
-        // on dessine la sphere
-        glScalef(1.6, 1.6, 1.6);
-
-        drawSphere();
-    }
-    glPopMatrix();
-
-    glPushMatrix();
-    {
-        // on dessine le bras 1
-        glRotatef(90, 1, 0, 0);
-        glScalef(1, 1, 10);
-        drawCone();
-    }
-    glPopMatrix();
-    glPushMatrix();
-    {
-        // on dessine le bras 2
-        glRotatef(-90, 1, 0, 0);
-        glScalef(1, 1, 10);
-        drawCone();
-    }
-    glPopMatrix();
-}
-
-void drawPan()
-{
-
-    glPushMatrix();
-    {
-        glColor3f(89 / 255., 115 / 255., 0.);
-        glTranslatef(0, 0, -5);
-        glScalef(3, 3, 0);
-        drawCircle();
-    }
-    glPopMatrix();
-
-    glPushMatrix();
-    {
-        glScalef(3, 3, -5);
-        glBegin(GL_LINES);
-        glColor3f(1., 0., 0.);
-        glVertex3f(0, 0, 0);
-        glVertex3f(cos(2 * M_PI / 3.), sin(2 * M_PI / 3.), 1.);
-        glVertex3f(0, 0, 0);
-        glVertex3f(cos(4 * M_PI / 3.), sin(4 * M_PI / 3.), 1.);
-        glVertex3f(0, 0, 0);
-        glVertex3f(cos(6 * M_PI / 3.), sin(6 * M_PI / 3.), 1.);
-        glEnd();
-    }
-    glPopMatrix();
-}
-
 double findShortestPath(double startPos, double targetPos)
 {
     double moveTrigo = fmod(targetPos - startPos + 2 * M_PI, 2 * M_PI);
@@ -104,14 +25,9 @@ double findShortestPath(double startPos, double targetPos)
 
     if (moveTrigo < moveClockwise)
     {
-
         return moveTrigo;
     }
-    else
-    {
-
-        return -moveClockwise;
-    }
+    return -moveClockwise;
 }
 
 void drawMenu(float alpha, float beta, double *startPos, double *targetPos)
@@ -478,30 +394,6 @@ void threeOutersCircles(float angle, float angle2)
 
 void displayJouerButton()
 {
-    // Activer la texture
-    glEnable(GL_TEXTURE_2D);
-
-    glPushMatrix();
-    {
-        glBegin(GL_QUADS);
-        // Associer les coordonnées de texture aux sommets
-        glTexCoord2f(0.0, 1.0); // Coin inférieur gauche (inversé verticalement)
-        glVertex3f(-1.0, -1.0, 0.0);
-
-        glTexCoord2f(1.0, 1.0); // Coin inférieur droit (inversé verticalement)
-        glVertex3f(1.0, -1.0, 0.0);
-
-        glTexCoord2f(1.0, 0.0); // Coin supérieur droit (inversé verticalement)
-        glVertex3f(1.0, 1.0, 0.0);
-
-        glTexCoord2f(0.0, 0.0); // Coin supérieur gauche (inversé verticalement)
-        glVertex3f(-1.0, 1.0, 0.0);
-        glEnd();
-    }
-    glPopMatrix();
-
-    // Désactiver la texture
-    glDisable(GL_TEXTURE_2D);
 }
 
 void showChoice(double pos, float angle)
