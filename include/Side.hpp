@@ -7,6 +7,8 @@
 #include <GL/gl.h>
 #include <memory>
 #include <iostream>
+#include "Ball.hpp"
+#include <cmath>
 
 class Side
 {
@@ -59,6 +61,32 @@ public:
             vertex.print();
         }
         std::cout << std::endl;
+    }
+
+    void ball_collision(Ball &ball) const
+    {
+        // Calcul du vecteur normal au plan
+        HCoordinates v1 = _vertices[1] - _vertices[0];
+        HCoordinates v2 = _vertices[2] - _vertices[0];
+        HCoordinates normal = v1.cross(v2).normalized();
+
+        // Calcul du coefficient d de l'équation du plan : ax + by + cz + d = 0
+        float d = -normal.dot(_vertices[0]);
+
+        // Calcul de la distance entre le centre de la sphère et le plan
+        float distance = normal.dot(ball.get_coordinates()) + d;
+
+        // Si la distance est inférieure au rayon de la sphère, il y a collision
+        if (std::abs(distance) <= BALL_SIZE)
+        {
+            // Calculer la réflexion de la vitesse de la balle par rapport au vecteur normal
+            auto u = ball.get_vectors();
+            auto dotProduct = u.dot(normal);
+            HCoordinates reflectedVelocity = u - (normal * dotProduct * 2.0f);
+
+            // Mettre à jour la direction de la balle avec la réflexion calculée
+            ball.set_vectors(reflectedVelocity);
+        }
     }
 
 private:

@@ -29,6 +29,9 @@ static const double FRAMERATE_IN_SECONDS = 1. / 144.;
 static int flag_filaire = 0;
 static const float GL_VIEW_SIZE = 100.;
 
+/* Ball */
+static bool ball_attached = true;
+
 /* Position of the choice */
 std::unique_ptr<int> choice(new int(0));
 std::unique_ptr<double> startPos(new double(0));
@@ -64,6 +67,8 @@ void startGame(GLFWwindow *window)
 {
     std::vector<Wall> corridor = Wall::initial_corridor();
     Racket racket;
+    Ball ball;
+    corridor.emplace_back(Wall::create_obstacle(HCoordinates{0, 10, -0.75}, 1, 0.25, 5, Color{0, 0, 0}));
     while (!glfwWindowShouldClose(window))
     { /* Get time (in second) at loop beginning */
         double startTime = glfwGetTime();
@@ -81,12 +86,18 @@ void startGame(GLFWwindow *window)
         glLoadIdentity();
         setGameCamera();
 
-        std::cout << "X : " << *cursX << " Z : " << *cursZ << std::endl;
-
+        /* Update positions */
         racket.updatePos(*cursX, *cursZ);
+        ball.updatePos(*cursX, *cursZ, ball_attached);
 
         /* Initial scenery setup */
+        for (auto &wall : corridor)
+        {
+            wall.draw();
+            wall.ball_collision(ball);
+        }
         racket.draw();
+        ball.draw();
 
         /* Scene rendering */
         // TODO
@@ -179,7 +190,6 @@ void onKey(GLFWwindow *window, int key, int /* scancode */, int action, int /* m
     case GLFW_KEY_RIGHT:
         theta += 5;
         break;
-
     case GLFW_KEY_ENTER:
         switch (*choice)
         {
@@ -190,6 +200,10 @@ void onKey(GLFWwindow *window, int key, int /* scancode */, int action, int /* m
             std::cout << "Touche non gérée" << std::endl;
         }
         break; // Add break statement to prevent fall-through
+    case GLFW_KEY_V:
+        if (is_pressed)
+            ball_attached = !ball_attached;
+        break;
     default:
         std::cout << "Touche non gérée" << std::endl;
     }
