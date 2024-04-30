@@ -26,7 +26,7 @@ public:
     const HCoordinates &get_coordinates() const { return _coordinates; }
     const HCoordinates &get_vectors() const { return _vectors; }
 
-    void set_vectors(const HCoordinates &vectors) { _vectors = vectors; }
+    void set_vectors(HCoordinates vectors) { _vectors = std::move(vectors); }
 
 private:
     HCoordinates _coordinates;

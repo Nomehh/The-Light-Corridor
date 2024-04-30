@@ -26,14 +26,24 @@ public:
         _z += other._z;
     }
 
-    void operator+=(float dy)
+    HCoordinates operator+(const HCoordinates &other) const
     {
-        _y += dy;
+        return HCoordinates(_x + other._x, _y + other._y, _z + other._z);
     }
 
     HCoordinates operator-(const HCoordinates &other) const
     {
         return HCoordinates(_x - other._x, _y - other._y, _z - other._z);
+    }
+
+    void operator+=(float dy)
+    {
+        _y += dy;
+    }
+
+    bool operator<=(const HCoordinates &other) const
+    {
+        return _x <= other._x && _y <= other._y && _z <= other._z;
     }
 
     HCoordinates cross(const HCoordinates &c) const

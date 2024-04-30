@@ -1,16 +1,21 @@
 #include "Ball.hpp"
 
-Ball::Ball() : _coordinates(0, 0, 0, CoordinateType::POINT), _vectors(0.05, -0.005, 0, CoordinateType::VECTOR), _attached{true}
+#define DEFAULT_DIR \
+    HCoordinates { 0.005, -0.05, -0.001, CoordinateType::VECTOR }
+
+Ball::Ball() : _coordinates(0, 0, 0, CoordinateType::POINT), _vectors(DEFAULT_DIR), _attached{true}
 {
 }
 
 void Ball::draw() const
 {
+    glEnable(GL_TEXTURE_2D);
     glPushMatrix();
     translate();
     glScalef(BALL_SIZE, BALL_SIZE, BALL_SIZE);
     drawSphere();
     glPopMatrix();
+    glDisable(GL_TEXTURE_2D);
 }
 
 void Ball::move(float x, float z)
@@ -33,6 +38,7 @@ void Ball::updatePos(float x, float y, bool isAttached)
     _attached = isAttached;
     if (_attached)
     {
+        this->set_vectors(DEFAULT_DIR);
         move(x, y);
         return;
     }

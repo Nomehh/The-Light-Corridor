@@ -224,6 +224,7 @@ void drawSphere()
 		glBegin(GL_TRIANGLE_STRIP);
 		for (int count{0}; count <= NB_SEG_CIRCLE; count++)
 		{
+			glTexCoord2f(angle_alpha / (2 * M_PI), angle_theta / M_PI);
 			glVertex3f(cosf(angle_alpha) * sinf(angle_theta),
 					   sinf(angle_alpha) * sinf(angle_theta),
 					   cosf(angle_theta));

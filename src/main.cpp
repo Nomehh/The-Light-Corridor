@@ -258,7 +258,7 @@ int main(int /* argc */, char ** /* argv */)
 
     // load triforce
     int x, y, c;
-    auto img = stbi_load("../assets/play_button.jpg", &x, &y, &c, 0);
+    auto img = stbi_load("../assets/ballText.jpg", &x, &y, &c, 0);
 
     if (img == nullptr)
     {
