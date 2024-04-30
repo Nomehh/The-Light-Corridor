@@ -69,6 +69,7 @@ void startGame(GLFWwindow *window)
     Racket racket;
     Ball ball;
     corridor.emplace_back(Wall::create_obstacle(HCoordinates{0, 10, -0.75}, 1, 0.25, 5, Color{0, 0, 0}));
+    // corridor.emplace_back(Wall::create_obstacle(HCoordinates{2, 13, 0.75}, 1, 2, 14, Color{0, 0, 0}));
     while (!glfwWindowShouldClose(window))
     { /* Get time (in second) at loop beginning */
         double startTime = glfwGetTime();

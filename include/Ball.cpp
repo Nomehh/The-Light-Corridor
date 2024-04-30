@@ -1,7 +1,7 @@
 #include "Ball.hpp"
 
 #define DEFAULT_DIR \
-    HCoordinates { 0.005, -0.05, -0.001, CoordinateType::VECTOR }
+    HCoordinates { 0.006, -0.005, 0.05, CoordinateType::VECTOR }
 
 Ball::Ball() : _coordinates(0, 0, 0, CoordinateType::POINT), _vectors(DEFAULT_DIR), _attached{true}
 {

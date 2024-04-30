@@ -8,13 +8,14 @@
 #include <memory>
 #include <iostream>
 #include "Ball.hpp"
+#include "SideIndicator.hpp"
 #include <cmath>
 
 class Side
 {
 public:
-    Side(std::vector<HCoordinates> vertices, Color color)
-        : _vertices{std::move(vertices)}, _color{std::move(color)}
+    Side(std::vector<HCoordinates> vertices, Color color, SideIndicator side_indicator)
+        : _vertices{std::move(vertices)}, _color{std::move(color)}, _side_indicator{std::move(side_indicator)}
     {
     }
 
@@ -63,11 +64,54 @@ public:
         std::cout << std::endl;
     }
 
+    HCoordinates projectOntoPlane(const HCoordinates &center, const HCoordinates &planeNormal) const
+    {
+        // Calcule le produit scalaire entre le centre de la sphère et le vecteur normal du plan
+        float dotProduct = center.dot(planeNormal);
+
+        // Calcule la projection du centre de la sphère sur le plan
+        HCoordinates projection = center - (planeNormal * dotProduct);
+
+        return projection;
+    }
+
+    bool front_back_check(const HCoordinates &ball) const
+    {
+        return ball.get_x() <= _vertices[0].get_x() && ball.get_x() >= _vertices[1].get_x() &&
+               ball.get_z() <= _vertices[0].get_z() && ball.get_z() >= _vertices[3].get_z();
+    }
+
+    bool top_bottom_check(const HCoordinates &ball) const
+    {
+        return ball.get_x() <= _vertices[0].get_x() && ball.get_x() >= _vertices[1].get_x() &&
+               ball.get_y() <= _vertices[0].get_y() && ball.get_y() >= _vertices[3].get_y();
+    }
+
+    bool left_right_check(const HCoordinates &ball) const
+    {
+        return ball.get_y() <= _vertices[0].get_y() && ball.get_y() >= _vertices[1].get_y() &&
+               ball.get_z() <= _vertices[0].get_z() && ball.get_z() >= _vertices[3].get_z();
+    }
+
+    bool ball_in_quad(const HCoordinates &ball) const
+    {
+        switch (_side_indicator)
+        {
+        case SideIndicator::FRONT_BACK:
+            return front_back_check(ball);
+        case SideIndicator::LEFT_RIGHT:
+            return left_right_check(ball);
+        case SideIndicator::TOP_BOTTOM:
+            return top_bottom_check(ball);
+        }
+    }
+
     void ball_collision(Ball &ball) const
     {
-        // Calcul du vecteur normal au plan formé par le côté
+        // Calcul du vecteur normal au plan
+
         HCoordinates v1 = _vertices[1] - _vertices[0];
-        HCoordinates v2 = _vertices[2] - _vertices[0];
+        HCoordinates v2 = _vertices[3] - _vertices[0];
         HCoordinates normal = v1.cross(v2).normalized();
 
         // Calcul du coefficient d de l'équation du plan : ax + by + cz + d = 0
@@ -76,21 +120,19 @@ public:
         // Calcul de la distance entre le centre de la sphère et le plan
         float distance = -normal.dot(ball.get_coordinates()) + d;
 
+        auto ballOnPlane = projectOntoPlane(ball.get_coordinates(), normal);
+
         // Si la distance est inférieure au rayon de la sphère, il y a collision
-        if (std::abs(distance) <= BALL_SIZE)
+        if (std::abs(distance) <= BALL_SIZE && ball_in_quad(ballOnPlane))
         {
-            // Vérifie si le point projeté est à l'intérieur du quadrilatère formé par les points
-
             std::cout << "Collision detected" << std::endl;
-
             // Calculer la réflexion de la vitesse de la balle par rapport au vecteur normal
-            HCoordinates u = ball.get_vectors();
-            float dotProduct = u.dot(normal);
+            auto u = ball.get_vectors();
+            auto dotProduct = u.dot(normal);
             HCoordinates reflectedVelocity = u - (normal * dotProduct * 2.0f);
 
             // Mettre à jour la direction de la balle avec la réflexion calculée
             ball.set_vectors(reflectedVelocity);
-            ball.updatePos(ball.get_x(), ball.get_y(), false);
             ball.updatePos(ball.get_x(), ball.get_y(), false);
         }
     }
@@ -98,4 +140,5 @@ public:
 private:
     std::vector<HCoordinates> _vertices;
     const Color _color;
+    SideIndicator _side_indicator;
 };

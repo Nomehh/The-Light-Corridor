@@ -31,7 +31,7 @@ public:
         vertices.emplace_back(top_left_front, width, 0, 0);
         vertices.emplace_back(top_left_front, width, 0, height);
         vertices.emplace_back(top_left_front, 0, 0, height);
-        sides.emplace_back(vertices, color);
+        sides.emplace_back(vertices, color, SideIndicator::FRONT_BACK);
 
         // top side
         vertices.clear();
@@ -39,15 +39,15 @@ public:
         vertices.emplace_back(top_left_front, width, 0, 0);
         vertices.emplace_back(top_left_front, width, depth, 0);
         vertices.emplace_back(top_left_front, 0, depth, 0);
-        sides.emplace_back(vertices, Color(1, 0, 0));
+        sides.emplace_back(vertices, Color(1, 0, 0), SideIndicator::TOP_BOTTOM);
 
-        // behind side
+        // back side
         vertices.clear();
         vertices.emplace_back(top_left_front, 0, depth, 0);
         vertices.emplace_back(top_left_front, width, depth, 0);
         vertices.emplace_back(top_left_front, width, depth, height);
         vertices.emplace_back(top_left_front, 0, depth, height);
-        sides.emplace_back(vertices, color);
+        sides.emplace_back(vertices, color, SideIndicator::FRONT_BACK);
 
         // bottom side
         vertices.clear();
@@ -55,7 +55,7 @@ public:
         vertices.emplace_back(top_left_front, width, 0, height);
         vertices.emplace_back(top_left_front, width, depth, height);
         vertices.emplace_back(top_left_front, 0, depth, height);
-        sides.emplace_back(vertices, color);
+        sides.emplace_back(vertices, color, SideIndicator::TOP_BOTTOM);
 
         // left side
         vertices.clear();
@@ -63,7 +63,7 @@ public:
         vertices.emplace_back(top_left_front, 0, depth, 0);
         vertices.emplace_back(top_left_front, 0, depth, height);
         vertices.emplace_back(top_left_front, 0, 0, height);
-        sides.emplace_back(vertices, color);
+        sides.emplace_back(vertices, color, SideIndicator::LEFT_RIGHT);
 
         // right side
         vertices.clear();
@@ -71,7 +71,7 @@ public:
         vertices.emplace_back(top_left_front, width, depth, 0);
         vertices.emplace_back(top_left_front, width, depth, height);
         vertices.emplace_back(top_left_front, width, 0, height);
-        sides.emplace_back(vertices, color);
+        sides.emplace_back(vertices, color, SideIndicator::LEFT_RIGHT);
 
         return Wall(sides);
     }
@@ -85,28 +85,28 @@ public:
         vertices.emplace_back(RIGHT_LIMIT, starting_y_point, TOP_LIMIT);
         vertices.emplace_back(RIGHT_LIMIT, starting_y_point - CORRIDOR_PART_SIZE, TOP_LIMIT);
         vertices.emplace_back(LEFT_LIMIT, starting_y_point - CORRIDOR_PART_SIZE, TOP_LIMIT);
-        sides.emplace_back(vertices, Color(0.5, 0.3, 0.0));
+        sides.emplace_back(vertices, Color(0.5, 0.3, 0.0), SideIndicator::TOP_BOTTOM);
 
         vertices.clear();
         vertices.emplace_back(LEFT_LIMIT, starting_y_point, BOTTOM_LIMIT);
         vertices.emplace_back(RIGHT_LIMIT, starting_y_point, BOTTOM_LIMIT);
         vertices.emplace_back(RIGHT_LIMIT, starting_y_point - CORRIDOR_PART_SIZE, BOTTOM_LIMIT);
         vertices.emplace_back(LEFT_LIMIT, starting_y_point - CORRIDOR_PART_SIZE, BOTTOM_LIMIT);
-        sides.emplace_back(vertices, Color(0.3, 0., 0.5));
+        sides.emplace_back(vertices, Color(0.3, 0., 0.5), SideIndicator::TOP_BOTTOM);
 
         vertices.clear();
         vertices.emplace_back(LEFT_LIMIT, starting_y_point, TOP_LIMIT);
-        vertices.emplace_back(LEFT_LIMIT, starting_y_point, BOTTOM_LIMIT);
-        vertices.emplace_back(LEFT_LIMIT, starting_y_point - CORRIDOR_PART_SIZE, BOTTOM_LIMIT);
         vertices.emplace_back(LEFT_LIMIT, starting_y_point - CORRIDOR_PART_SIZE, TOP_LIMIT);
-        sides.emplace_back(vertices, Color(0.4, 0., 0.5));
+        vertices.emplace_back(LEFT_LIMIT, starting_y_point - CORRIDOR_PART_SIZE, BOTTOM_LIMIT);
+        vertices.emplace_back(LEFT_LIMIT, starting_y_point, BOTTOM_LIMIT);
+        sides.emplace_back(vertices, Color(0.4, 0., 0.5), SideIndicator::LEFT_RIGHT);
 
         vertices.clear();
         vertices.emplace_back(RIGHT_LIMIT, starting_y_point, TOP_LIMIT);
-        vertices.emplace_back(RIGHT_LIMIT, starting_y_point, BOTTOM_LIMIT);
-        vertices.emplace_back(RIGHT_LIMIT, starting_y_point - CORRIDOR_PART_SIZE, BOTTOM_LIMIT);
         vertices.emplace_back(RIGHT_LIMIT, starting_y_point - CORRIDOR_PART_SIZE, TOP_LIMIT);
-        sides.emplace_back(vertices, Color(0.6, 0., 0.5));
+        vertices.emplace_back(RIGHT_LIMIT, starting_y_point - CORRIDOR_PART_SIZE, BOTTOM_LIMIT);
+        vertices.emplace_back(RIGHT_LIMIT, starting_y_point, BOTTOM_LIMIT);
+        sides.emplace_back(vertices, Color(0.6, 0., 0.5), SideIndicator::LEFT_RIGHT);
 
         return Wall(sides);
     }

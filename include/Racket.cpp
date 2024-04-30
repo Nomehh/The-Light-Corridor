@@ -5,7 +5,8 @@ Racket::Racket() : _racket{std::vector<HCoordinates>{
                                HCoordinates{-0.2f, 13.f, 0.2f},
                                HCoordinates{-0.2f, 13.f, -0.2f},
                                HCoordinates{0.2f, 13.f, -0.2f}},
-                           Color{1, 1, 1}}
+                           Color{1, 1, 1},
+                           SideIndicator::FRONT_BACK}
 {
 }
 Racket::Racket(float x, float z) : _racket{std::vector<HCoordinates>{
@@ -13,7 +14,8 @@ Racket::Racket(float x, float z) : _racket{std::vector<HCoordinates>{
                                                HCoordinates{-x + 0.2f, 13.f, z + 0.2f},
                                                HCoordinates{-x + 0.2f, 13.f, z - 0.2f},
                                                HCoordinates{x + 0.2f, 13.f, z - 0.2f}},
-                                           Color{1, 1, 1}}
+                                           Color{1, 1, 1},
+                                           SideIndicator::FRONT_BACK}
 
 {
 }
