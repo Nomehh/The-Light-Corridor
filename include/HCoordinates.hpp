@@ -107,6 +107,11 @@ public:
 
     void set_y(float dy) { _y += dy; }
 
+    HCoordinates rotate(float angle)
+    {
+        return HCoordinates(_x * cos(angle) - _y * sin(angle), _y, -_x * sin(angle) + _z * cos(angle), CoordinateType::VECTOR);
+    }
+
 private:
     float _x;
     float _y;
