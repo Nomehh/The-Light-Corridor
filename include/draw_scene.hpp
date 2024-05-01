@@ -32,7 +32,9 @@ void nextMovingDottedCircle(float angle);
 
 void threeOutersCircles(float angle, float angle2);
 
-void displayJouerButton();
+void displayPlayButton();
+
+void displayQuitButton();
 
 void showChoice(double pos, float angle);
 

@@ -15,6 +15,7 @@
 #include "../include/Racket.hpp"
 #include "../include/Ball.hpp"
 #include "../include/Wall.hpp"
+#include "../include/Level.hpp"
 
 /* Window properties */
 static const unsigned int WINDOW_WIDTH = 1920;
@@ -31,6 +32,11 @@ static const float GL_VIEW_SIZE = 100.;
 
 /* Ball */
 static bool ball_attached = true;
+static bool advance = false;
+
+/*Button */
+int x, y, c;
+const auto ball_img = stbi_load("../assets/ballText.jpg", &x, &y, &c, 0);
 
 /* Position of the choice */
 std::unique_ptr<int> choice(new int(0));
@@ -63,13 +69,50 @@ static void cursor_position_callback(GLFWwindow *window, double xpos, double ypo
     *cursZ = 2 * (-ypos / (WINDOW_HEIGHT) + 0.5);
 }
 
+static void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)
+{
+
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && !ball_attached)
+    {
+        advance = true;
+    }
+    else
+    {
+        advance = false;
+    }
+}
+
+void drawLife()
+{
+    glEnable(GL_TEXTURE_2D);
+    glPushMatrix();
+    glScalef(0.05, 0.05, 0.05);
+    drawSphere();
+    glPopMatrix();
+    glDisable(GL_TEXTURE_2D);
+}
+
+void displayLife(int nb_life)
+{
+    for (int i = 0; i < nb_life; i++)
+    {
+        glPushMatrix();
+        glTranslatef(1.8 - i * 0.2, 13, 0.9);
+        drawLife();
+        glPopMatrix();
+    }
+}
+
 void startGame(GLFWwindow *window)
 {
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, ball_img);
+    int life = 5;
     std::vector<Wall> corridor = Wall::initial_corridor();
     Racket racket;
     Ball ball;
-    corridor.emplace_back(Wall::create_obstacle(HCoordinates{0, 10, -0.75}, 1, 0.25, 5, Color{0, 0, 0}));
-    // corridor.emplace_back(Wall::create_obstacle(HCoordinates{2, 13, 0.75}, 1, 2, 14, Color{0, 0, 0}));
+    Level::generate_first_level().load_level(corridor);
+    Level::generate_second_level().load_level(corridor);
+
     while (!glfwWindowShouldClose(window))
     { /* Get time (in second) at loop beginning */
         double startTime = glfwGetTime();
@@ -96,9 +139,27 @@ void startGame(GLFWwindow *window)
         {
             wall.draw();
             wall.ball_collision(ball);
+            if (advance)
+            {
+                wall.advance_wall(0.05f);
+            }
         }
+        racket.check_collision(ball);
+
+        if (advance)
+        {
+            ball.move(0.05f);
+        }
+
+        if (ball.lost())
+        {
+            life--;
+            ball_attached = true;
+        }
+
         racket.draw();
         ball.draw();
+        displayLife(life);
 
         /* Scene rendering */
         // TODO
@@ -194,6 +255,9 @@ void onKey(GLFWwindow *window, int key, int /* scancode */, int action, int /* m
     case GLFW_KEY_ENTER:
         switch (*choice)
         {
+        case 1:
+            glfwSetWindowShouldClose(window, GLFW_TRUE);
+            break;
         case 2:
             startGame(window);
             break;
@@ -255,13 +319,19 @@ int main(int /* argc */, char ** /* argv */)
     glfwSetWindowSizeCallback(window, onWindowResized);
     glfwSetKeyCallback(window, onKey);
     glfwSetCursorPosCallback(window, cursor_position_callback);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
     glfwSwapInterval(1); // synchronisation verticale
 
     // load triforce
     int x, y, c;
-    auto img = stbi_load("../assets/ballText.jpg", &x, &y, &c, 0);
+    auto ball_img = stbi_load("../assets/ballText.jpg", &x, &y, &c, 0);
 
-    if (img == nullptr)
+    int x2, y2, c2;
+    auto play_img = stbi_load("../assets/play_img.jpg", &x2, &y2, &c2, 0);
+    int x3, y3, c3;
+    auto quit_img = stbi_load("../assets/quit_img.jpg", &x3, &y3, &c3, 0);
+
+    if (ball_img == nullptr || play_img == nullptr || quit_img == nullptr)
     {
         std::cerr << "Error loading image" << std::endl;
         return -1;
@@ -270,11 +340,14 @@ int main(int /* argc */, char ** /* argv */)
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_TEXTURE_2D);
 
-    GLuint texture = 0;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    GLuint ball_texture = 0;
+
+    glGenTextures(1, &ball_texture);
+
+    glBindTexture(GL_TEXTURE_2D, ball_texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, img);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, ball_img);
 
     glPointSize(5.0);
     glEnable(GL_DEPTH_TEST);
@@ -323,7 +396,11 @@ int main(int /* argc */, char ** /* argv */)
             glEnd();
             glPopMatrix();
         }
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x2, y2, 0, GL_RGB, GL_UNSIGNED_BYTE, play_img);
         drawMenu(alpha, beta, startPos.get(), targetPos.get());
+        displayPlayButton();
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x3, y3, 0, GL_RGB, GL_UNSIGNED_BYTE, quit_img);
+        displayQuitButton();
         glPopMatrix();
 
         /* Swap front and back buffers */
@@ -346,9 +423,11 @@ int main(int /* argc */, char ** /* argv */)
         beta += step_beta;
     }
     glDisable(GL_TEXTURE_2D);
-    stbi_image_free(img);
+    stbi_image_free(ball_img);
+    stbi_image_free(play_img);
+    stbi_image_free(quit_img);
     glBindTexture(GL_TEXTURE_2D, 0);
-    glDeleteTextures(1, &texture);
+    glDeleteTextures(1, &ball_texture);
     glfwTerminate();
     return 0;
 }

@@ -66,10 +66,7 @@ public:
 
     HCoordinates projectOntoPlane(const HCoordinates &center, const HCoordinates &planeNormal) const
     {
-        // Calcule le produit scalaire entre le centre de la sphère et le vecteur normal du plan
-        float dotProduct = center.dot(planeNormal);
-
-        // Calcule la projection du centre de la sphère sur le plan
+        auto dotProduct = center.dot(planeNormal);
         HCoordinates projection = center - (planeNormal * dotProduct);
 
         return projection;
@@ -108,34 +105,27 @@ public:
 
     void ball_collision(Ball &ball) const
     {
-        // Calcul du vecteur normal au plan
-
         HCoordinates v1 = _vertices[1] - _vertices[0];
         HCoordinates v2 = _vertices[3] - _vertices[0];
         HCoordinates normal = v1.cross(v2).normalized();
 
-        // Calcul du coefficient d de l'équation du plan : ax + by + cz + d = 0
-        float d = normal.dot(_vertices[0]);
-
-        // Calcul de la distance entre le centre de la sphère et le plan
-        float distance = -normal.dot(ball.get_coordinates()) + d;
+        auto d = normal.dot(_vertices[0]);
+        auto distance = -normal.dot(ball.get_coordinates()) + d;
 
         auto ballOnPlane = projectOntoPlane(ball.get_coordinates(), normal);
 
-        // Si la distance est inférieure au rayon de la sphère, il y a collision
         if (std::abs(distance) <= BALL_SIZE && ball_in_quad(ballOnPlane))
         {
-            std::cout << "Collision detected" << std::endl;
-            // Calculer la réflexion de la vitesse de la balle par rapport au vecteur normal
             auto u = ball.get_vectors();
             auto dotProduct = u.dot(normal);
             HCoordinates reflectedVelocity = u - (normal * dotProduct * 2.0f);
 
-            // Mettre à jour la direction de la balle avec la réflexion calculée
             ball.set_vectors(reflectedVelocity);
             ball.updatePos(ball.get_x(), ball.get_y(), false);
         }
     }
+
+    const std::vector<HCoordinates> &get_vertices() const { return _vertices; }
 
 private:
     std::vector<HCoordinates> _vertices;

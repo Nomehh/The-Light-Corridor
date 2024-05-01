@@ -1,7 +1,7 @@
 #include "Ball.hpp"
 
 #define DEFAULT_DIR \
-    HCoordinates { 0.006, -0.005, 0.05, CoordinateType::VECTOR }
+    HCoordinates { 0.00, -0.05, 0.00, CoordinateType::VECTOR }
 
 Ball::Ball() : _coordinates(0, 0, 0, CoordinateType::POINT), _vectors(DEFAULT_DIR), _attached{true}
 {
@@ -18,19 +18,29 @@ void Ball::draw() const
     glDisable(GL_TEXTURE_2D);
 }
 
-void Ball::move(float x, float z)
-{
-    _coordinates = HCoordinates{x, 13, z};
-}
-
 void Ball::move()
 {
     _coordinates += _vectors;
 }
 
+void Ball::move(float dy)
+{
+    _coordinates.set_y(dy);
+}
+
+void Ball::move(float x, float z)
+{
+    _coordinates = HCoordinates{x, 12.8, z};
+}
+
 void Ball::translate() const
 {
     _coordinates.translate();
+}
+
+bool Ball::lost()
+{
+    return _coordinates.get_y() > 14.5f;
 }
 
 void Ball::updatePos(float x, float y, bool isAttached)

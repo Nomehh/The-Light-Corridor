@@ -13,11 +13,13 @@ class Ball
 public:
     Ball();
     void draw() const;
-    void move(float x, float z);
     void move();
+    void move(float dy);
+    void move(float x, float z);
     void translate() const;
     void updatePos(float x, float y, bool isAttached);
-    bool is_inside(std::vector<HCoordinates> _vertices);
+
+    bool lost();
 
     float get_x() const;
     float get_y() const;

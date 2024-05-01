@@ -50,7 +50,6 @@ void drawMenu(float alpha, float beta, double *startPos, double *targetPos)
     nextCircleWithPlanet(-alpha, beta);
     nextMovingDottedCircle(beta);
     threeOutersCircles(alpha, -alpha);
-    displayJouerButton();
 }
 
 void first3Circles(float alpha)
@@ -392,8 +391,52 @@ void threeOutersCircles(float angle, float angle2)
     glPopMatrix();
 }
 
-void displayJouerButton()
+void displayPlayButton()
 {
+    glEnable(GL_TEXTURE_2D);
+    glPushMatrix();
+    {
+        // do a square and apply texture
+        glTranslatef(-5, -5, 0.1);
+        glRotatef(135, 0, 0, 1);
+        glRotatef(180, 1, 0, 0);
+        glBegin(GL_QUADS);
+        glTexCoord2f(0, 0);
+        glVertex3f(-1, -1, 0);
+        glTexCoord2f(1, 0);
+        glVertex3f(1, -1, 0);
+        glTexCoord2f(1, 1);
+        glVertex3f(1, 1, 0);
+        glTexCoord2f(0, 1);
+        glVertex3f(-1, 1, 0);
+        glEnd();
+    }
+    glPopMatrix();
+    glDisable(GL_TEXTURE_2D);
+}
+
+void displayQuitButton()
+{
+    glEnable(GL_TEXTURE_2D);
+    glPushMatrix();
+    {
+        // do a square and apply texture
+        glTranslatef(6, -6, 0.1);
+        glRotatef(135, 0, 0, 1);
+        glRotatef(180, 1, 0, 0);
+        glBegin(GL_QUADS);
+        glTexCoord2f(0, 0);
+        glVertex3f(-1, -1, 0);
+        glTexCoord2f(1, 0);
+        glVertex3f(1, -1, 0);
+        glTexCoord2f(1, 1);
+        glVertex3f(1, 1, 0);
+        glTexCoord2f(0, 1);
+        glVertex3f(-1, 1, 0);
+        glEnd();
+    }
+    glPopMatrix();
+    glDisable(GL_TEXTURE_2D);
 }
 
 void showChoice(double pos, float angle)

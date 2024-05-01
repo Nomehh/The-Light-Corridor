@@ -8,10 +8,12 @@
 #include "Ball.hpp"
 
 #define CORRIDOR_PART_SIZE 5.0f
-#define LEFT_LIMIT 2
-#define RIGHT_LIMIT -2
-#define TOP_LIMIT 1
-#define BOTTOM_LIMIT -1
+#define LEFT_LIMIT 2.f
+#define RIGHT_LIMIT -2.f
+#define TOP_LIMIT 1.f
+#define BOTTOM_LIMIT -1.f
+#define CORRIDOR_WIDTH 4.f
+#define CORRIDOR_HEIGHT 2.f
 
 class Wall
 {
@@ -39,7 +41,7 @@ public:
         vertices.emplace_back(top_left_front, width, 0, 0);
         vertices.emplace_back(top_left_front, width, depth, 0);
         vertices.emplace_back(top_left_front, 0, depth, 0);
-        sides.emplace_back(vertices, Color(1, 0, 0), SideIndicator::TOP_BOTTOM);
+        sides.emplace_back(vertices, color, SideIndicator::TOP_BOTTOM);
 
         // back side
         vertices.clear();
@@ -114,9 +116,9 @@ public:
     static std::vector<Wall> initial_corridor()
     {
         std::vector<Wall> walls;
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 64; i++)
         {
-            walls.emplace_back(create_corridor_part(i * CORRIDOR_PART_SIZE));
+            walls.emplace_back(create_corridor_part(15 + i * -CORRIDOR_PART_SIZE));
         }
         return walls;
     }

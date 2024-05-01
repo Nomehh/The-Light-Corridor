@@ -105,6 +105,8 @@ public:
         return _z;
     }
 
+    void set_y(float dy) { _y += dy; }
+
 private:
     float _x;
     float _y;
