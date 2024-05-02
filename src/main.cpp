@@ -34,14 +34,18 @@ static const float GL_VIEW_SIZE = 100.;
 static bool ball_attached = true;
 static bool advance = false;
 
+/* Score and life */
+unsigned int score = 0;
+int life = 5;
+
 /*Button */
 int x, y, c;
 const auto ball_img = stbi_load("../assets/ballText.jpg", &x, &y, &c, 0);
 
 /* Position of the choice */
-std::unique_ptr<int> choice(new int(0));
-std::unique_ptr<double> startPos(new double(0));
-std::unique_ptr<double> targetPos(new double(0));
+std::unique_ptr<int> choice(new int(2));
+std::unique_ptr<double> startPos(new double(3 * M_PI / 2.));
+std::unique_ptr<double> targetPos(new double(M_PI / 2.));
 
 std::unique_ptr<float> cursX(new float());
 std::unique_ptr<float> cursZ(new float());
@@ -86,7 +90,7 @@ void drawLife()
 {
     glEnable(GL_TEXTURE_2D);
     glPushMatrix();
-    glScalef(0.05, 0.05, 0.05);
+    glScalef(0.05, 0.01, 0.05);
     drawSphere();
     glPopMatrix();
     glDisable(GL_TEXTURE_2D);
@@ -106,12 +110,12 @@ void displayLife(int nb_life)
 void startGame(GLFWwindow *window)
 {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, ball_img);
-    int life = 5;
+    life = 5;
     std::vector<Wall> corridor = Wall::initial_corridor();
     Racket racket;
     Ball ball;
     Level::generate_first_level().load_level(corridor);
-    Level::generate_second_level().load_level(corridor);
+    // Level::generate_second_level().load_level(corridor);
 
     while (!glfwWindowShouldClose(window))
     { /* Get time (in second) at loop beginning */
@@ -149,12 +153,19 @@ void startGame(GLFWwindow *window)
         if (advance)
         {
             ball.move(0.05f);
+            score++;
         }
 
         if (ball.lost())
         {
             life--;
             ball_attached = true;
+        }
+
+        if (score > 2220)
+        {
+            std::cout << "You win !" << std::endl;
+            glfwSetWindowShouldClose(window, GLFW_TRUE);
         }
 
         racket.draw();
@@ -226,36 +237,10 @@ void onKey(GLFWwindow *window, int key, int /* scancode */, int action, int /* m
             *targetPos = 3 * M_PI / 2.;
         }
         break;
-    case GLFW_KEY_J:
-        if (dist_zoom < 60.0f)
-            dist_zoom *= 1.1;
-        std::cout << "Zoom is " << dist_zoom << std::endl;
-        break;
-    case GLFW_KEY_I:
-        if (dist_zoom > 1.0f)
-            dist_zoom *= 0.9;
-        std::cout << "Zoom is " << dist_zoom << std::endl;
-        break;
-    case GLFW_KEY_UP:
-        if (phy > 2)
-            phy -= 2;
-        std::cout << "Phy : " << phy << std::endl;
-        break;
-    case GLFW_KEY_DOWN:
-        if (phy <= 88.)
-            phy += 2;
-        std::cout << "Phy : " << phy << std::endl;
-        break;
-    case GLFW_KEY_LEFT:
-        theta -= 5;
-        break;
-    case GLFW_KEY_RIGHT:
-        theta += 5;
-        break;
     case GLFW_KEY_ENTER:
         switch (*choice)
         {
-        case 1:
+        case 0:
             glfwSetWindowShouldClose(window, GLFW_TRUE);
             break;
         case 2:
@@ -267,7 +252,11 @@ void onKey(GLFWwindow *window, int key, int /* scancode */, int action, int /* m
         break; // Add break statement to prevent fall-through
     case GLFW_KEY_V:
         if (is_pressed)
+        {
+            if (!ball_attached)
+                life--;
             ball_attached = !ball_attached;
+        }
         break;
     default:
         std::cout << "Touche non gérée" << std::endl;
@@ -381,7 +370,6 @@ int main(int /* argc */, char ** /* argv */)
         /* Initial scenery setup */
 
         glPushMatrix();
-        drawFrame();
         glRotatef(90., 1, 0, 0);
         glRotatef(225., 0, 0, 1);
         {
@@ -429,5 +417,6 @@ int main(int /* argc */, char ** /* argv */)
     glBindTexture(GL_TEXTURE_2D, 0);
     glDeleteTextures(1, &ball_texture);
     glfwTerminate();
+    std::cout << "Score : " << score * life << std::endl;
     return 0;
 }

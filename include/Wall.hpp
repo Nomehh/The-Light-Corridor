@@ -87,28 +87,28 @@ public:
         vertices.emplace_back(RIGHT_LIMIT, starting_y_point, TOP_LIMIT);
         vertices.emplace_back(RIGHT_LIMIT, starting_y_point - CORRIDOR_PART_SIZE, TOP_LIMIT);
         vertices.emplace_back(LEFT_LIMIT, starting_y_point - CORRIDOR_PART_SIZE, TOP_LIMIT);
-        sides.emplace_back(vertices, Color(0.5, 0.3, 0.0), SideIndicator::TOP_BOTTOM);
+        sides.emplace_back(vertices, Color(0.35, 0.36, 0.40), SideIndicator::TOP_BOTTOM);
 
         vertices.clear();
         vertices.emplace_back(LEFT_LIMIT, starting_y_point, BOTTOM_LIMIT);
         vertices.emplace_back(RIGHT_LIMIT, starting_y_point, BOTTOM_LIMIT);
         vertices.emplace_back(RIGHT_LIMIT, starting_y_point - CORRIDOR_PART_SIZE, BOTTOM_LIMIT);
         vertices.emplace_back(LEFT_LIMIT, starting_y_point - CORRIDOR_PART_SIZE, BOTTOM_LIMIT);
-        sides.emplace_back(vertices, Color(0.3, 0., 0.5), SideIndicator::TOP_BOTTOM);
+        sides.emplace_back(vertices, Color(0.35, 0.36, 0.40), SideIndicator::TOP_BOTTOM);
 
         vertices.clear();
         vertices.emplace_back(LEFT_LIMIT, starting_y_point, TOP_LIMIT);
         vertices.emplace_back(LEFT_LIMIT, starting_y_point - CORRIDOR_PART_SIZE, TOP_LIMIT);
         vertices.emplace_back(LEFT_LIMIT, starting_y_point - CORRIDOR_PART_SIZE, BOTTOM_LIMIT);
         vertices.emplace_back(LEFT_LIMIT, starting_y_point, BOTTOM_LIMIT);
-        sides.emplace_back(vertices, Color(0.4, 0., 0.5), SideIndicator::LEFT_RIGHT);
+        sides.emplace_back(vertices, Color(0.43, 0.45, 0.49), SideIndicator::LEFT_RIGHT);
 
         vertices.clear();
         vertices.emplace_back(RIGHT_LIMIT, starting_y_point, TOP_LIMIT);
         vertices.emplace_back(RIGHT_LIMIT, starting_y_point - CORRIDOR_PART_SIZE, TOP_LIMIT);
         vertices.emplace_back(RIGHT_LIMIT, starting_y_point - CORRIDOR_PART_SIZE, BOTTOM_LIMIT);
         vertices.emplace_back(RIGHT_LIMIT, starting_y_point, BOTTOM_LIMIT);
-        sides.emplace_back(vertices, Color(0.6, 0., 0.5), SideIndicator::LEFT_RIGHT);
+        sides.emplace_back(vertices, Color(0.43, 0.45, 0.49), SideIndicator::LEFT_RIGHT);
 
         return Wall(sides);
     }

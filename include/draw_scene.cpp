@@ -421,7 +421,7 @@ void displayQuitButton()
     glPushMatrix();
     {
         // do a square and apply texture
-        glTranslatef(6, -6, 0.1);
+        glTranslatef(5, 5, 0.1);
         glRotatef(135, 0, 0, 1);
         glRotatef(180, 1, 0, 0);
         glBegin(GL_QUADS);

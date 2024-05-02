@@ -25,16 +25,17 @@ Level Level::generate_second_level()
     std::vector<Wall> obstacles;
     std::string code = "level2";
 
+    obstacles.emplace_back(Wall::create_obstacle(HCoordinates(LEFT_LIMIT, -10, TOP_LIMIT), CORRIDOR_WIDTH / 3, CORRIDOR_HEIGHT, 3, Color::generateRandomColor()));
     obstacles.emplace_back(Wall::create_obstacle(HCoordinates(LEFT_LIMIT, -15, TOP_LIMIT), CORRIDOR_WIDTH / 3, 3, CORRIDOR_HEIGHT, Color::generateRandomColor()));
-    obstacles.emplace_back(Wall::create_obstacle(HCoordinates(RIGHT_LIMIT - CORRIDOR_WIDTH / 3, -20, TOP_LIMIT), CORRIDOR_WIDTH / 3, 3, CORRIDOR_HEIGHT, Color::generateRandomColor()));
-    obstacles.emplace_back(Wall::create_obstacle(HCoordinates(RIGHT_LIMIT - CORRIDOR_WIDTH / 3, -25, TOP_LIMIT), CORRIDOR_WIDTH / 3, 3, CORRIDOR_HEIGHT, Color::generateRandomColor()));
-    obstacles.emplace_back(Wall::create_obstacle(HCoordinates(LEFT_LIMIT, -30, TOP_LIMIT), CORRIDOR_WIDTH, 3, CORRIDOR_HEIGHT, Color::generateRandomColor()));
-    obstacles.emplace_back(Wall::create_obstacle(HCoordinates(LEFT_LIMIT, -35, TOP_LIMIT), CORRIDOR_WIDTH, 3, CORRIDOR_HEIGHT, Color::generateRandomColor()));
-    obstacles.emplace_back(Wall::create_obstacle(HCoordinates(RIGHT_LIMIT - CORRIDOR_WIDTH / 3, -40, TOP_LIMIT), CORRIDOR_WIDTH / 3, 3, CORRIDOR_HEIGHT, Color::generateRandomColor()));
-    obstacles.emplace_back(Wall::create_obstacle(HCoordinates(LEFT_LIMIT, -43, TOP_LIMIT), CORRIDOR_WIDTH, 3, CORRIDOR_HEIGHT, Color::generateRandomColor()));
-    obstacles.emplace_back(Wall::create_obstacle(HCoordinates(RIGHT_LIMIT - CORRIDOR_WIDTH / 3, -50, TOP_LIMIT), CORRIDOR_WIDTH / 3, 3, CORRIDOR_HEIGHT, Color::generateRandomColor()));
-    obstacles.emplace_back(Wall::create_obstacle(HCoordinates(RIGHT_LIMIT - CORRIDOR_WIDTH / 3, -58, TOP_LIMIT), CORRIDOR_WIDTH / 3, 3, CORRIDOR_HEIGHT, Color::generateRandomColor()));
-    obstacles.emplace_back(Wall::create_obstacle(HCoordinates(LEFT_LIMIT, 10, TOP_LIMIT), CORRIDOR_WIDTH, 3, CORRIDOR_HEIGHT, Color::generateRandomColor()));
+    obstacles.emplace_back(Wall::create_obstacle(HCoordinates(LEFT_LIMIT, -20, TOP_LIMIT), CORRIDOR_WIDTH / 2, 1.2, 3, Color::generateRandomColor()));
+    obstacles.emplace_back(Wall::create_obstacle(HCoordinates(LEFT_LIMIT / 2., -23, TOP_LIMIT), CORRIDOR_WIDTH / 3 + 0.3f, CORRIDOR_HEIGHT / 3., 8, Color::generateRandomColor()));
+    obstacles.emplace_back(Wall::create_obstacle(HCoordinates(LEFT_LIMIT, -40, TOP_LIMIT), CORRIDOR_WIDTH, 0.4, 3, Color::generateRandomColor()));
+    obstacles.emplace_back(Wall::create_obstacle(HCoordinates(LEFT_LIMIT, -45, -0.7), CORRIDOR_WIDTH, 0.3, 2, Color::generateRandomColor()));
+    obstacles.emplace_back(Wall::create_obstacle(HCoordinates(LEFT_LIMIT, -49, TOP_LIMIT), CORRIDOR_WIDTH, 1.2, 3, Color::generateRandomColor()));
+    obstacles.emplace_back(Wall::create_obstacle(HCoordinates(LEFT_LIMIT - CORRIDOR_WIDTH / 2., -58, TOP_LIMIT), CORRIDOR_WIDTH / 3, CORRIDOR_HEIGHT, 3, Color::generateRandomColor()));
+    obstacles.emplace_back(Wall::create_obstacle(HCoordinates(LEFT_LIMIT, -64, TOP_LIMIT), CORRIDOR_WIDTH / 3, CORRIDOR_HEIGHT, 3, Color::generateRandomColor()));
+    obstacles.emplace_back(Wall::create_obstacle(HCoordinates(RIGHT_LIMIT - CORRIDOR_WIDTH / 3, -73, TOP_LIMIT), CORRIDOR_WIDTH / 3, CORRIDOR_HEIGHT, 3, Color::generateRandomColor()));
+    obstacles.emplace_back(Wall::create_obstacle(HCoordinates(LEFT_LIMIT, -90, TOP_LIMIT), CORRIDOR_WIDTH / 3, CORRIDOR_HEIGHT, 3, Color::generateRandomColor()));
 
     return Level(code, obstacles);
 }
