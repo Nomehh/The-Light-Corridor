@@ -57,13 +57,13 @@ void Racket::check_collision(Ball &ball) const
     if (std::abs(distance) <= BALL_SIZE && front_back_check(ballOnPlane))
     {
         float racketWidth = 0.2f;
-        float contactPoint = (ballOnPlane.get_x() - _racket.get_vertices()[0].get_x()) / racketWidth;
+        float racketHeight = 0.2f;
+        float contactPointX = ball.get_x() - ((_racket.get_vertices()[0].get_x() + _racket.get_vertices()[1].get_x()) / 2.0f);
+        float contactPointZ = ball.get_z() - ((_racket.get_vertices()[0].get_z() + _racket.get_vertices()[3].get_z()) / 2.0f);
 
-        float angle = 30 * (contactPoint - 0.5);
-        HCoordinates velocity = ball.get_vectors();
-
-        HCoordinates new_velo = velocity.rotate(angle) * -1.0f;
-
+        HCoordinates rCentertoContact = HCoordinates(contactPointX, 0, contactPointZ, CoordinateType::VECTOR);
+        HCoordinates velocity = (rCentertoContact + normal);
+        HCoordinates new_velo = velocity * 0.05;
         ball.set_vectors(new_velo);
 
         ball.updatePos(ball.get_x(), ball.get_y(), false);

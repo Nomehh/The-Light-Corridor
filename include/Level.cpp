@@ -34,6 +34,7 @@ Level Level::generate_second_level()
     obstacles.emplace_back(Wall::create_obstacle(HCoordinates(LEFT_LIMIT, -43, TOP_LIMIT), CORRIDOR_WIDTH, 3, CORRIDOR_HEIGHT, Color::generateRandomColor()));
     obstacles.emplace_back(Wall::create_obstacle(HCoordinates(RIGHT_LIMIT - CORRIDOR_WIDTH / 3, -50, TOP_LIMIT), CORRIDOR_WIDTH / 3, 3, CORRIDOR_HEIGHT, Color::generateRandomColor()));
     obstacles.emplace_back(Wall::create_obstacle(HCoordinates(RIGHT_LIMIT - CORRIDOR_WIDTH / 3, -58, TOP_LIMIT), CORRIDOR_WIDTH / 3, 3, CORRIDOR_HEIGHT, Color::generateRandomColor()));
+    obstacles.emplace_back(Wall::create_obstacle(HCoordinates(LEFT_LIMIT, 10, TOP_LIMIT), CORRIDOR_WIDTH, 3, CORRIDOR_HEIGHT, Color::generateRandomColor()));
 
     return Level(code, obstacles);
 }
