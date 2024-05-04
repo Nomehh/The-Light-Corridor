@@ -42,6 +42,12 @@ int life = 5;
 int x, y, c;
 const auto ball_img = stbi_load("../assets/ballText.jpg", &x, &y, &c, 0);
 
+/* Light */
+GLfloat light_position[] = {0., 15.5, 1., 1.0};
+GLfloat amb[] = {0.1, 0.1, 0.1, 1.0};
+GLfloat diff[] = {200 / 255., 200 / 255., 200 / 255.};
+GLfloat spec[] = {75 / 255., 75 / 255, 75 / 255};
+
 /* Position of the choice */
 std::unique_ptr<int> choice(new int(2));
 std::unique_ptr<double> startPos(new double(3 * M_PI / 2.));
@@ -88,8 +94,10 @@ static void mouse_button_callback(GLFWwindow *window, int button, int action, in
 
 void drawLife()
 {
-    glEnable(GL_TEXTURE_2D);
+
     glPushMatrix();
+    glColor3f(1., 1., 1.);
+    glEnable(GL_TEXTURE_2D);
     glScalef(0.05, 0.01, 0.05);
     drawSphere();
     glPopMatrix();
@@ -109,13 +117,52 @@ void displayLife(int nb_life)
 
 void startGame(GLFWwindow *window)
 {
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, ball_img);
+
     life = 5;
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, ball_img);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, amb);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diff);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, spec);
+    glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.);
+    glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.);
+    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.);
+
+    glLightfv(GL_LIGHT1, GL_AMBIENT, amb);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, diff);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, spec);
+    glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 1.);
+    glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, 0.);
+    glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.);
+
     std::vector<Wall> corridor = Wall::initial_corridor();
     Racket racket;
     Ball ball;
-    Level::generate_first_level().load_level(corridor);
-    // Level::generate_second_level().load_level(corridor);
+    switch (*choice)
+    {
+    case 1:
+    {
+        Level level1 = Level::generate_first_level();
+        level1.load_level(corridor);
+        break;
+    }
+    case 3:
+    {
+        Level::generate_second_level(0).load_level(corridor);
+        break;
+    }
+    case 2:
+    {
+        Level level1 = Level::generate_first_level();
+        level1.load_level(corridor);
+        Level::generate_second_level(level1.depth_end_level()).load_level(corridor);
+        break;
+    }
+    }
+
+    Level level1 = Level::generate_first_level();
+    level1.load_level(corridor);
+    Level::generate_second_level(level1.depth_end_level()).load_level(corridor);
 
     while (!glfwWindowShouldClose(window))
     { /* Get time (in second) at loop beginning */
@@ -133,21 +180,41 @@ void startGame(GLFWwindow *window)
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         setGameCamera();
+        glPushMatrix();
+
+        glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
+        glColor3f(1., 1., 1.);
+        glTranslatef(0, 15.5, 0.);
+        glScalef(0.1, 0.1, 0.1);
+        drawSphere();
+        glPopMatrix();
+
+        ball.draw();
+
+        glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHT0);
+        glEnable(GL_LIGHT1);
+        glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
 
         /* Update positions */
         racket.updatePos(*cursX, *cursZ);
         ball.updatePos(*cursX, *cursZ, ball_attached);
 
-        /* Initial scenery setup */
-        for (auto &wall : corridor)
+        for (auto it = corridor.begin(); it != corridor.end();)
         {
-            wall.draw();
-            wall.ball_collision(ball);
-            if (advance)
+            if ((*it).has_to_be_deleted())
             {
-                wall.advance_wall(0.05f);
+                it = corridor.erase(it);
+            }
+            else
+            {
+                it++;
             }
         }
+
+        /* Initial scenery setup */
+
         racket.check_collision(ball);
 
         if (advance)
@@ -162,19 +229,35 @@ void startGame(GLFWwindow *window)
             ball_attached = true;
         }
 
+        if (life <= 0)
+        {
+            std::cout << "You lose :c" << std::endl;
+            glfwSetWindowShouldClose(window, GLFW_TRUE);
+        }
         if (score > 2220)
         {
             std::cout << "You win !" << std::endl;
             glfwSetWindowShouldClose(window, GLFW_TRUE);
         }
 
+        for (auto &wall : corridor)
+        {
+            wall.draw();
+            wall.ball_collision(ball);
+            if (advance)
+            {
+                wall.advance_wall(0.05f);
+            }
+        }
+
         racket.draw();
-        ball.draw();
+
+        glDisable(GL_LIGHTING);
+
         displayLife(life);
 
         /* Scene rendering */
         // TODO
-        drawFrame();
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -242,6 +325,12 @@ void onKey(GLFWwindow *window, int key, int /* scancode */, int action, int /* m
         {
         case 0:
             glfwSetWindowShouldClose(window, GLFW_TRUE);
+            break;
+        case 1:
+            startGame(window);
+            break;
+        case 3:
+            startGame(window);
             break;
         case 2:
             startGame(window);
@@ -410,13 +499,13 @@ int main(int /* argc */, char ** /* argv */)
         alpha += step_alpha;
         beta += step_beta;
     }
-    glDisable(GL_TEXTURE_2D);
+
     stbi_image_free(ball_img);
     stbi_image_free(play_img);
     stbi_image_free(quit_img);
     glBindTexture(GL_TEXTURE_2D, 0);
     glDeleteTextures(1, &ball_texture);
     glfwTerminate();
-    std::cout << "Score : " << score * life << std::endl;
+    std::cout << "Score : " << score * (life + 1) << std::endl;
     return 0;
 }

@@ -13,6 +13,9 @@ struct Color
 
     static Color generateRandomColor()
     {
-        return Color{static_cast<float>(rand()) / RAND_MAX, static_cast<float>(rand()) / RAND_MAX, static_cast<float>(rand()) / RAND_MAX};
+
+        return Color{static_cast<float>(rand()) / static_cast<float>(RAND_MAX),
+                     static_cast<float>(rand()) / static_cast<float>(RAND_MAX),
+                     static_cast<float>(rand()) / static_cast<float>(RAND_MAX)};
     }
 };

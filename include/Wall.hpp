@@ -7,19 +7,20 @@
 #include <memory>
 #include "Ball.hpp"
 
-#define CORRIDOR_PART_SIZE 5.0f
+#define CORRIDOR_PART_SIZE 1.0f
 #define LEFT_LIMIT 2.f
 #define RIGHT_LIMIT -2.f
 #define TOP_LIMIT 1.f
 #define BOTTOM_LIMIT -1.f
 #define CORRIDOR_WIDTH 4.f
 #define CORRIDOR_HEIGHT 2.f
+#define DELETE_Y_POINT 15.f
 
 class Wall
 {
 public:
-    Wall(std::vector<Side> sides)
-        : _sides{std::move(sides)}
+    Wall(std::vector<Side> sides, float current_depth)
+        : _sides{std::move(sides)}, _current_depth{current_depth}
     {
     }
 
@@ -75,7 +76,7 @@ public:
         vertices.emplace_back(top_left_front, width, 0, height);
         sides.emplace_back(vertices, color, SideIndicator::LEFT_RIGHT);
 
-        return Wall(sides);
+        return Wall(sides, top_left_front.get_y());
     }
 
     static Wall create_corridor_part(float starting_y_point)
@@ -110,13 +111,13 @@ public:
         vertices.emplace_back(RIGHT_LIMIT, starting_y_point, BOTTOM_LIMIT);
         sides.emplace_back(vertices, Color(0.43, 0.45, 0.49), SideIndicator::LEFT_RIGHT);
 
-        return Wall(sides);
+        return Wall(sides, starting_y_point - CORRIDOR_PART_SIZE);
     }
 
     static std::vector<Wall> initial_corridor()
     {
         std::vector<Wall> walls;
-        for (int i = 0; i < 64; i++)
+        for (int i = 0; i < 64 * 10; i++)
         {
             walls.emplace_back(create_corridor_part(15 + i * -CORRIDOR_PART_SIZE));
         }
@@ -125,6 +126,7 @@ public:
 
     void advance_wall(float dy)
     {
+        _current_depth += dy;
         for (auto &side : _sides)
         {
             side.advance(dy);
@@ -147,6 +149,12 @@ public:
         }
     }
 
+    bool has_to_be_deleted()
+    {
+        return _current_depth > DELETE_Y_POINT;
+    }
+
 private:
     std::vector<Side> _sides;
+    float _current_depth;
 };

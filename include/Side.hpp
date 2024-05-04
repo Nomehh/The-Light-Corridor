@@ -29,6 +29,14 @@ public:
 
     void draw() const
     {
+        GLfloat light_spec[] = {0.1, 0.1, 0.1};
+        GLfloat amb[] = {_color._r, _color._g, _color._b, 1.0};
+        GLfloat color[] = {_color._r, _color._g, _color._b, 1.0};
+
+        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, amb);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, light_spec);
+        glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 5.);
         glBegin(GL_TRIANGLE_FAN);
         glColor3f(_color._r, _color._g, _color._b);
         for (const auto &vertex : _vertices)

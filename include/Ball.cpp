@@ -9,13 +9,17 @@ Ball::Ball() : _coordinates(0, 0, 0, CoordinateType::POINT), _vectors(DEFAULT_DI
 
 void Ball::draw() const
 {
-    glEnable(GL_TEXTURE_2D);
+    float light_position[] = {_coordinates.get_x(), _coordinates.get_y(), _coordinates.get_z(), 1.0};
+
+    glLightfv(GL_LIGHT1, GL_POSITION, light_position);
     glPushMatrix();
     translate();
     glScalef(BALL_SIZE, BALL_SIZE, BALL_SIZE);
+    glColor3f(1., 1., 1.);
+    glEnable(GL_TEXTURE_2D);
     drawSphere();
-    glPopMatrix();
     glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
 }
 
 void Ball::move()
