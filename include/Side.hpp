@@ -109,6 +109,7 @@ public:
         case SideIndicator::TOP_BOTTOM:
             return top_bottom_check(ball);
         }
+        return false;
     }
 
     void ball_collision(Ball &ball) const
